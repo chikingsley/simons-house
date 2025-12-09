@@ -11,12 +11,15 @@ import {
   Loader2,
   MapPin,
   MessageCircle,
+  PenLine,
   Plus,
   Reply,
   Save,
   Send,
   Sparkles,
   Star,
+  ThumbsDown,
+  ThumbsUp,
   User as UserIcon,
   X,
   Zap,
@@ -24,6 +27,7 @@ import {
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 import { api } from "../lib/api";
 import { useUser } from "../lib/user-context";
 import type { ProfileExtended, User, UserStatus } from "../types";
@@ -50,6 +54,15 @@ const ProfileView: React.FC<ProfileViewProps> = ({
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [requestSent, setRequestSent] = useState(false);
+
+  // Write Reference Modal State
+  const [showWriteRefModal, setShowWriteRefModal] = useState(false);
+  const [refType, setRefType] = useState<"Host" | "Surfer" | "Personal">(
+    "Host"
+  );
+  const [refIsPositive, setRefIsPositive] = useState(true);
+  const [refText, setRefText] = useState("");
+  const [isSubmittingRef, setIsSubmittingRef] = useState(false);
 
   // Interest Editing State
   const [newInterest, setNewInterest] = useState("");
@@ -176,6 +189,43 @@ const ProfileView: React.FC<ProfileViewProps> = ({
     }
     setRequestSent(true);
     setShowRequestModal(false);
+  };
+
+  const handleSubmitReference = async () => {
+    if (!(profile && refText.trim())) {
+      return;
+    }
+    setIsSubmittingRef(true);
+    try {
+      const newRef = await api.createReference({
+        userId: profile.id,
+        authorId: currentUserId,
+        type: refType,
+        text: refText.trim(),
+        isPositive: refIsPositive,
+      });
+      // Add the new reference to the profile
+      setProfile((prev) =>
+        prev
+          ? {
+              ...prev,
+              references: [newRef, ...prev.references],
+              referencesCount: prev.referencesCount + 1,
+            }
+          : prev
+      );
+      // Reset form and close modal
+      setRefText("");
+      setRefType("Host");
+      setRefIsPositive(true);
+      setShowWriteRefModal(false);
+      toast.success("Reference submitted successfully!");
+    } catch (error) {
+      console.error("Failed to submit reference:", error);
+      toast.error("Failed to submit reference. Please try again.");
+    } finally {
+      setIsSubmittingRef(false);
+    }
   };
 
   // Refs for file inputs
@@ -341,9 +391,15 @@ const ProfileView: React.FC<ProfileViewProps> = ({
           </button>
         )}
 
-        {/* Action Button for Non-Owner */}
+        {/* Action Buttons for Non-Owner */}
         {!isMe && (
-          <div className="absolute right-6 bottom-6 z-20">
+          <div className="absolute right-6 bottom-6 z-20 flex gap-3">
+            <button
+              className="flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-blue-700 active:scale-95"
+              onClick={() => setShowWriteRefModal(true)}
+            >
+              <PenLine size={18} /> Write Reference
+            </button>
             {requestSent ? (
               <button
                 className="flex cursor-default items-center gap-2 rounded-lg bg-gray-500 px-6 py-2 font-bold text-white shadow-lg"
@@ -1194,6 +1250,134 @@ const ProfileView: React.FC<ProfileViewProps> = ({
             >
               Cancel
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Write Reference Modal */}
+      {showWriteRefModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="fade-in zoom-in-95 w-full max-w-lg animate-in rounded-xl bg-white p-6 shadow-xl duration-200">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="font-bold text-gray-900 text-xl">
+                Write Reference for {profile.name}
+              </h3>
+              <button
+                className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                onClick={() => {
+                  setShowWriteRefModal(false);
+                  setRefText("");
+                  setRefType("Host");
+                  setRefIsPositive(true);
+                }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Reference Type Selector */}
+            <div className="mb-4">
+              <label className="mb-2 block font-semibold text-gray-700 text-sm">
+                How do you know {profile.name}?
+              </label>
+              <div className="flex gap-2">
+                {(["Host", "Surfer", "Personal"] as const).map((type) => (
+                  <button
+                    className={`flex-1 rounded-lg border-2 px-4 py-2 font-semibold text-sm transition-all ${
+                      refType === type
+                        ? "border-blue-500 bg-blue-50 text-blue-700"
+                        : "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50"
+                    }`}
+                    key={type}
+                    onClick={() => setRefType(type)}
+                    type="button"
+                  >
+                    {type === "Host" && "They hosted me"}
+                    {type === "Surfer" && "They stayed with me"}
+                    {type === "Personal" && "We met up"}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Positive/Negative Toggle */}
+            <div className="mb-4">
+              <label className="mb-2 block font-semibold text-gray-700 text-sm">
+                Was it a positive experience?
+              </label>
+              <div className="flex gap-3">
+                <button
+                  className={`flex flex-1 items-center justify-center gap-2 rounded-lg border-2 px-4 py-3 font-semibold transition-all ${
+                    refIsPositive
+                      ? "border-green-500 bg-green-50 text-green-700"
+                      : "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50"
+                  }`}
+                  onClick={() => setRefIsPositive(true)}
+                  type="button"
+                >
+                  <ThumbsUp size={20} /> Positive
+                </button>
+                <button
+                  className={`flex flex-1 items-center justify-center gap-2 rounded-lg border-2 px-4 py-3 font-semibold transition-all ${
+                    refIsPositive
+                      ? "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50"
+                      : "border-red-500 bg-red-50 text-red-700"
+                  }`}
+                  onClick={() => setRefIsPositive(false)}
+                  type="button"
+                >
+                  <ThumbsDown size={20} /> Negative
+                </button>
+              </div>
+            </div>
+
+            {/* Reference Text */}
+            <div className="mb-6">
+              <label className="mb-2 block font-semibold text-gray-700 text-sm">
+                Your Reference
+              </label>
+              <textarea
+                className="w-full resize-none rounded-lg border border-gray-300 p-3 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                onChange={(e) => setRefText(e.target.value)}
+                placeholder={`Share your experience with ${profile.name}...`}
+                rows={5}
+                value={refText}
+              />
+              <p className="mt-1 text-gray-500 text-xs">
+                Be honest and constructive. Your reference helps others make
+                informed decisions.
+              </p>
+            </div>
+
+            {/* Submit Button */}
+            <div className="flex gap-3">
+              <button
+                className="flex-1 rounded-lg px-4 py-2.5 font-bold text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
+                onClick={() => {
+                  setShowWriteRefModal(false);
+                  setRefText("");
+                  setRefType("Host");
+                  setRefIsPositive(true);
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 font-bold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={!refText.trim() || isSubmittingRef}
+                onClick={handleSubmitReference}
+              >
+                {isSubmittingRef ? (
+                  <>
+                    <Loader2 className="animate-spin" size={18} /> Submitting...
+                  </>
+                ) : (
+                  <>
+                    <PenLine size={18} /> Submit Reference
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       )}

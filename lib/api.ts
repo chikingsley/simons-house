@@ -3,6 +3,7 @@ import type {
   Label,
   Message,
   ProfileExtended,
+  Reference,
   User,
 } from "../types";
 
@@ -113,5 +114,21 @@ export const api = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ labels }),
     });
+  },
+
+  // Create reference
+  async createReference(options: {
+    userId: string;
+    authorId: string;
+    type: "Host" | "Surfer" | "Personal";
+    text: string;
+    isPositive: boolean;
+  }): Promise<Reference> {
+    const res = await fetch(`${API_BASE}/references`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(options),
+    });
+    return res.json();
   },
 };

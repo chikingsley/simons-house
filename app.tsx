@@ -9,6 +9,7 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
+import { Toaster } from "sonner";
 import DashboardView from "./components/dashboard";
 import InboxView from "./components/inbox-view";
 import Navbar from "./components/navbar";
@@ -164,6 +165,7 @@ const App: React.FC = () => (
   <BrowserRouter>
     <UserProvider>
       <AppRoutes />
+      <Toaster position="top-right" richColors />
     </UserProvider>
   </BrowserRouter>
 );

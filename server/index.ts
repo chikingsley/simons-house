@@ -347,6 +347,63 @@ const handlers = {
     return true;
   },
 
+  // Create a new reference
+  createReference: (options: {
+    userId: string; // user being referenced
+    authorId: string; // author writing the reference
+    type: "Host" | "Surfer" | "Personal";
+    text: string;
+    isPositive: boolean;
+  }): Reference => {
+    const { userId, authorId, type, text, isPositive } = options;
+    // Get author info
+    const authorRow = db
+      .query("SELECT * FROM users WHERE id = ?")
+      .get(authorId);
+    if (!authorRow) {
+      throw new Error("Author not found");
+    }
+    const author = dbRowToUser(authorRow as Record<string, unknown>);
+
+    const id = `ref-${Date.now()}`;
+    const date = new Date().toLocaleDateString("en-US", {
+      month: "short",
+      year: "numeric",
+    });
+
+    db.query(
+      'INSERT INTO "references" (id, user_id, author_id, author_name, author_avatar, author_location, type, text, date, is_positive) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    ).run(
+      id,
+      userId,
+      authorId,
+      author.name,
+      author.avatarUrl,
+      author.location,
+      type,
+      text,
+      date,
+      isPositive ? 1 : 0
+    );
+
+    // Update user's reference count
+    db.query(
+      "UPDATE users SET references_count = references_count + 1 WHERE id = ?"
+    ).run(userId);
+
+    return {
+      id,
+      authorId,
+      authorName: author.name,
+      authorAvatar: author.avatarUrl,
+      authorLocation: author.location,
+      type,
+      text,
+      date,
+      isPositive,
+    };
+  },
+
   // Create new conversation
   createConversation: (
     userId: string,
@@ -495,6 +552,13 @@ const server = Bun.serve({
         const { labels } = await req.json();
         handlers.updateConversationLabels(convId, labels);
         return Response.json({ success: true }, { headers: corsHeaders });
+      }
+
+      // Create reference
+      if (path === "/api/references" && req.method === "POST") {
+        const options = await req.json();
+        const reference = handlers.createReference(options);
+        return Response.json(reference, { headers: corsHeaders });
       }
 
       return Response.json(
