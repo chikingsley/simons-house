@@ -1,0 +1,99 @@
+import {
+  LayoutDashboard,
+  Mail,
+  Settings as SettingsIcon,
+  User,
+} from "lucide-react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { api } from "../lib/api";
+import { useUser } from "../lib/user-context";
+
+const Navbar: React.FC = () => {
+  const location = useLocation();
+  const { currentUserId } = useUser();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  // Load unread message count
+  useEffect(() => {
+    const loadUnreadCount = async () => {
+      try {
+        const conversations = await api.getConversations(currentUserId);
+        // Count unread messages (messages from others that are not read)
+        const count = conversations.reduce((acc, conv) => {
+          const unread = conv.messages.filter(
+            (m) => m.senderId !== currentUserId && !m.isRead
+          ).length;
+          return acc + unread;
+        }, 0);
+        setUnreadCount(count);
+      } catch (error) {
+        console.error("Failed to load unread count:", error);
+      }
+    };
+    loadUnreadCount();
+
+    // Poll for updates every 30 seconds
+    const interval = setInterval(loadUnreadCount, 30_000);
+    return () => clearInterval(interval);
+  }, [currentUserId]);
+
+  const navItemClass = (path: string | string[]) => {
+    const paths = Array.isArray(path) ? path : [path];
+    const isActive = paths.some(
+      (p) => location.pathname === p || location.pathname.startsWith(`${p}/`)
+    );
+    return `flex flex-col items-center gap-1 px-3 py-2 text-xs font-medium transition-colors ${
+      isActive
+        ? "text-orange-600 border-b-2 border-orange-600"
+        : "text-gray-600 hover:text-orange-500 hover:bg-gray-50"
+    }`;
+  };
+
+  return (
+    <nav className="sticky top-0 z-50 h-16 border-gray-200 border-b bg-white shadow-sm">
+      <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4">
+        {/* Left: Logo */}
+        <div className="flex flex-1 items-center gap-6">
+          <Link to="/">
+            {/* Logo Imitation */}
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-500 p-1.5 font-bold font-serif text-white text-xl italic shadow-sm transition-colors hover:bg-orange-600">
+              Cs
+            </div>
+          </Link>
+        </div>
+
+        {/* Right: Actions */}
+        <div className="flex h-full items-center gap-2">
+          <Link className={navItemClass(["/", "/dashboard", "/search"])} to="/">
+            <LayoutDashboard size={20} />
+            <span>Dashboard</span>
+          </Link>
+
+          <Link className={navItemClass("/inbox")} to="/inbox">
+            <div className="relative">
+              <Mail size={20} />
+              {unreadCount > 0 && (
+                <span className="-top-1 -right-1 absolute flex h-3.5 w-3.5 items-center justify-center rounded-full bg-red-500 text-[9px] text-white">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
+            </div>
+            <span>Inbox</span>
+          </Link>
+          <Link className={navItemClass("/profile")} to="/profile">
+            <User size={20} />
+            <span>Profile</span>
+          </Link>
+          <Link className={navItemClass("/settings")} to="/settings">
+            <SettingsIcon size={20} />
+            <span>Settings</span>
+          </Link>
+        </div>
+      </div>
+    </nav>
+  );
+};
+
+export default Navbar;
