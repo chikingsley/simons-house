@@ -95,10 +95,11 @@ const SettingsView: React.FC = () => {
 
   // Helper for consistent input styles (Light theme enforcement)
   const inputClass =
-    "w-full border border-gray-300 rounded px-3 py-2 text-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none bg-white text-gray-900 placeholder-gray-400";
-  const labelClass = "block text-sm font-bold text-gray-700 mb-1";
+    "w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400";
+  const labelClass =
+    "block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1";
   const sectionTitleClass =
-    "text-sm font-bold text-gray-500 uppercase tracking-wider mb-4 border-b border-gray-200 pb-2";
+    "text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4 border-b border-gray-200 dark:border-gray-700 pb-2";
 
   // Get name parts
   const nameParts = profile?.name.split(" ") || ["", ""];
@@ -109,7 +110,9 @@ const SettingsView: React.FC = () => {
     if (isLoading || !profile) {
       return (
         <div className="flex h-64 items-center justify-center">
-          <div className="text-gray-500">Loading settings...</div>
+          <div className="text-gray-500 dark:text-gray-400">
+            Loading settings...
+          </div>
         </div>
       );
     }
@@ -125,7 +128,7 @@ const SettingsView: React.FC = () => {
                 <div>
                   <label className={labelClass}>Username</label>
                   <div className="flex items-center">
-                    <span className="rounded-l border border-gray-300 border-r-0 bg-gray-100 px-3 py-2 text-gray-500 text-sm">
+                    <span className="rounded-l border border-gray-300 border-r-0 bg-gray-100 px-3 py-2 text-gray-500 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400">
                       app.com/people/
                     </span>
                     <input
@@ -209,7 +212,7 @@ const SettingsView: React.FC = () => {
                     <option>Spanish</option>
                     <option>French</option>
                   </select>
-                  <p className="mt-1 text-gray-400 text-xs">
+                  <p className="mt-1 text-gray-400 text-xs dark:text-gray-500">
                     We'll send you messages in this language.
                   </p>
                 </div>
@@ -225,7 +228,7 @@ const SettingsView: React.FC = () => {
                 <div>
                   <label className={labelClass}>Phone</label>
                   <div className="flex">
-                    <select className="rounded-l border border-gray-300 border-r-0 bg-gray-50 px-2 text-gray-900 text-sm">
+                    <select className="rounded-l border border-gray-300 border-r-0 bg-gray-50 px-2 text-gray-900 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
                       <option>🇺🇸</option>
                     </select>
                     <input
@@ -239,14 +242,14 @@ const SettingsView: React.FC = () => {
 
                 <div>
                   <label className={labelClass}>Home Address</label>
-                  <div className="mb-2 rounded border border-gray-200 bg-gray-50 p-3 text-gray-600 text-sm">
+                  <div className="mb-2 rounded border border-gray-200 bg-gray-50 p-3 text-gray-600 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
                     {settings.address || "No address set"}
                     <br />
                     <span className="font-bold">Public Profile Location:</span>{" "}
                     {settings.publicLocation || profile.location}
                   </div>
                   <button
-                    className="font-medium text-blue-600 text-sm hover:underline"
+                    className="font-medium text-blue-600 text-sm hover:underline dark:text-blue-400"
                     type="button"
                   >
                     Edit your Address
@@ -262,12 +265,12 @@ const SettingsView: React.FC = () => {
                 <div className="flex items-center justify-between py-2">
                   <div>
                     <label className={labelClass}>Email</label>
-                    <span className="text-gray-600 text-sm">
+                    <span className="text-gray-600 text-sm dark:text-gray-400">
                       {settings.email || "No email set"}
                     </span>
                   </div>
                   <button
-                    className="font-medium text-blue-600 text-sm hover:underline"
+                    className="font-medium text-blue-600 text-sm hover:underline dark:text-blue-400"
                     type="button"
                   >
                     Change My Email
@@ -276,10 +279,12 @@ const SettingsView: React.FC = () => {
                 <div className="flex items-center justify-between py-2">
                   <div>
                     <label className={labelClass}>Password</label>
-                    <span className="text-gray-600 text-sm">••••••••••</span>
+                    <span className="text-gray-600 text-sm dark:text-gray-400">
+                      ••••••••••
+                    </span>
                   </div>
                   <button
-                    className="font-medium text-blue-600 text-sm hover:underline"
+                    className="font-medium text-blue-600 text-sm hover:underline dark:text-blue-400"
                     type="button"
                   >
                     Change My Password
@@ -291,7 +296,7 @@ const SettingsView: React.FC = () => {
             {/* Emergency Contact */}
             <section>
               <h3 className={`${sectionTitleClass} mt-8`}>Emergency Contact</h3>
-              <p className="mb-4 text-gray-500 text-sm">
+              <p className="mb-4 text-gray-500 text-sm dark:text-gray-400">
                 You give us permission to notify this person if we believe you
                 were involved in an emergency.
               </p>
@@ -308,7 +313,7 @@ const SettingsView: React.FC = () => {
                 <div>
                   <label className={labelClass}>Phone Number</label>
                   <div className="flex">
-                    <select className="rounded-l border border-gray-300 border-r-0 bg-gray-50 px-2 text-gray-900 text-sm">
+                    <select className="rounded-l border border-gray-300 border-r-0 bg-gray-50 px-2 text-gray-900 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
                       <option>🇺🇸</option>
                     </select>
                     <input
@@ -339,15 +344,15 @@ const SettingsView: React.FC = () => {
               </div>
             </section>
 
-            <div className="flex justify-between border-gray-200 border-t pt-6">
+            <div className="flex justify-between border-gray-200 border-t pt-6 dark:border-gray-700">
               <button
-                className="rounded bg-blue-600 px-6 py-2 font-bold text-white transition-colors hover:bg-blue-700"
+                className="rounded bg-blue-600 px-6 py-2 font-bold text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
                 type="button"
               >
                 Save Changes
               </button>
               <button
-                className="font-medium text-red-500 text-sm hover:underline"
+                className="font-medium text-red-500 text-sm hover:underline dark:text-red-400"
                 type="button"
               >
                 Deactivate My Account
@@ -361,44 +366,64 @@ const SettingsView: React.FC = () => {
           <div className="fade-in animate-in space-y-8">
             <section>
               <h3 className={sectionTitleClass}>Membership & Subscriptions</h3>
-              <div className="rounded border border-gray-200 bg-white p-6 shadow-sm">
-                <h4 className="mb-4 font-bold text-orange-600 text-sm uppercase">
+              <div className="rounded border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                <h4 className="mb-4 font-bold text-orange-600 text-sm uppercase dark:text-orange-500">
                   Your Subscription Details
                 </h4>
                 <div className="grid grid-cols-[160px_1fr] gap-y-4 text-sm">
-                  <div className="font-bold text-gray-700">Membership Type</div>
-                  <div className="text-gray-900">Couchsurfing Contribution</div>
+                  <div className="font-bold text-gray-700 dark:text-gray-300">
+                    Membership Type
+                  </div>
+                  <div className="text-gray-900 dark:text-gray-100">
+                    Couchsurfing Contribution
+                  </div>
 
-                  <div className="font-bold text-gray-700">
+                  <div className="font-bold text-gray-700 dark:text-gray-300">
                     Subscription Status
                   </div>
-                  <div className="font-bold text-green-600">Active</div>
+                  <div className="font-bold text-green-600 dark:text-green-500">
+                    Active
+                  </div>
 
-                  <div className="font-bold text-gray-700">Next Billing</div>
-                  <div className="text-gray-900">1/7/2026</div>
+                  <div className="font-bold text-gray-700 dark:text-gray-300">
+                    Next Billing
+                  </div>
+                  <div className="text-gray-900 dark:text-gray-100">
+                    1/7/2026
+                  </div>
 
-                  <div className="font-bold text-gray-700">Chosen Plan</div>
-                  <div className="text-gray-900">
+                  <div className="font-bold text-gray-700 dark:text-gray-300">
+                    Chosen Plan
+                  </div>
+                  <div className="text-gray-900 dark:text-gray-100">
                     Couchsurfing Contribution charged monthly
                   </div>
 
-                  <div className="font-bold text-gray-700">Payment Method</div>
-                  <div className="text-gray-900">Apple In App</div>
+                  <div className="font-bold text-gray-700 dark:text-gray-300">
+                    Payment Method
+                  </div>
+                  <div className="text-gray-900 dark:text-gray-100">
+                    Apple In App
+                  </div>
                 </div>
                 <div className="mt-6">
-                  <button className="rounded bg-gray-800 px-4 py-2 font-bold text-sm text-white hover:bg-gray-900">
+                  <button className="rounded bg-gray-800 px-4 py-2 font-bold text-sm text-white hover:bg-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600">
                     Manage Plan
                   </button>
                 </div>
               </div>
 
               <div className="mt-6 rounded border border-gray-200 bg-white p-6 shadow-sm">
-                <h4 className="mb-4 font-bold text-orange-600 text-sm uppercase">
+                <h4 className="mb-4 font-bold text-orange-600 text-sm uppercase dark:text-orange-500">
                   Verification
                 </h4>
                 <div className="grid grid-cols-[160px_1fr] gap-y-4 text-sm">
-                  <div className="font-bold text-gray-700">Status</div>
-                  <div className="font-bold text-green-600">Lifetime</div>
+                  <div className="font-bold text-gray-700 dark:text-gray-300">
+                    Status
+                  </div>
+                  <div className="font-bold text-green-600 dark:text-green-500">
+                    Lifetime
+                  </div>
                 </div>
               </div>
             </section>
@@ -410,14 +435,14 @@ const SettingsView: React.FC = () => {
           <div className="fade-in animate-in space-y-8">
             <section>
               <h3 className={sectionTitleClass}>Notification Preferences</h3>
-              <p className="mb-6 text-gray-500 text-sm">
+              <p className="mb-6 text-gray-500 text-sm dark:text-gray-400">
                 Choose how you want to be notified about activity on
                 Couchsurfing.
               </p>
 
-              <div className="overflow-hidden rounded-lg border border-gray-200">
+              <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
                 <table className="w-full text-left text-sm">
-                  <thead className="border-gray-200 border-b bg-gray-50 font-bold text-gray-700">
+                  <thead className="border-gray-200 border-b bg-gray-50 font-bold text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
                     <tr>
                       <th className="p-4">Notification Type</th>
                       <th className="w-24 p-4 text-center">Email</th>
@@ -425,7 +450,7 @@ const SettingsView: React.FC = () => {
                       <th className="w-24 p-4 text-center">Browser</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                     {[
                       "New messages",
                       "Couch requests",
@@ -435,8 +460,11 @@ const SettingsView: React.FC = () => {
                       "Event invites",
                       "Marketing updates",
                     ].map((type, i) => (
-                      <tr className="hover:bg-gray-50" key={i}>
-                        <td className="p-4 font-medium text-gray-800">
+                      <tr
+                        className="hover:bg-gray-50 dark:hover:bg-gray-700"
+                        key={i}
+                      >
+                        <td className="p-4 font-medium text-gray-800 dark:text-gray-200">
                           {type}
                         </td>
                         <td className="p-4 text-center">
@@ -467,7 +495,7 @@ const SettingsView: React.FC = () => {
               </div>
 
               <div className="mt-6 flex justify-end">
-                <button className="rounded bg-blue-600 px-6 py-2 font-bold text-white transition-colors hover:bg-blue-700">
+                <button className="rounded bg-blue-600 px-6 py-2 font-bold text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600">
                   Update Preferences
                 </button>
               </div>
@@ -523,7 +551,7 @@ const SettingsView: React.FC = () => {
                   },
                 ].map((social) => (
                   <div
-                    className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50"
+                    className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700"
                     key={social.name}
                   >
                     <div className="flex items-center gap-4">
@@ -533,11 +561,11 @@ const SettingsView: React.FC = () => {
                         <social.icon size={20} />
                       </div>
                       <div>
-                        <h4 className="font-bold text-gray-900">
+                        <h4 className="font-bold text-gray-900 dark:text-gray-100">
                           {social.name}
                         </h4>
                         <p
-                          className={`font-semibold text-xs ${social.connected ? "text-green-600" : "text-gray-400"}`}
+                          className={`font-semibold text-xs ${social.connected ? "text-green-600 dark:text-green-500" : "text-gray-400 dark:text-gray-500"}`}
                         >
                           {social.connected
                             ? `Connected as ${profile.name}`
@@ -548,8 +576,8 @@ const SettingsView: React.FC = () => {
                     <button
                       className={`rounded px-4 py-1.5 font-bold text-sm transition-colors ${
                         social.connected
-                          ? "border border-gray-300 text-gray-600 hover:bg-gray-100"
-                          : "bg-blue-600 text-white hover:bg-blue-700"
+                          ? "border border-gray-300 text-gray-600 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600"
+                          : "bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
                       }`}
                     >
                       {social.connected ? "Disconnect" : "Connect"}
@@ -566,66 +594,66 @@ const SettingsView: React.FC = () => {
           <div className="fade-in animate-in space-y-8">
             <section>
               <h3 className={sectionTitleClass}>Privacy Settings</h3>
-              <div className="space-y-6 rounded border border-gray-200 bg-white p-6">
+              <div className="space-y-6 rounded border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h4 className="font-bold text-gray-900">
+                    <h4 className="font-bold text-gray-900 dark:text-gray-100">
                       Search Visibility
                     </h4>
-                    <p className="text-gray-500 text-sm">
+                    <p className="text-gray-500 text-sm dark:text-gray-400">
                       Allow search engines (like Google) to index your profile.
                     </p>
                   </div>
                   <div className="relative mr-2 inline-block w-12 select-none align-middle">
                     <input
-                      className="toggle-checkbox absolute block h-6 w-6 cursor-pointer appearance-none rounded-full border-4 bg-white checked:right-0 checked:border-green-400"
+                      className="toggle-checkbox absolute block h-6 w-6 cursor-pointer appearance-none rounded-full border-4 bg-white checked:right-0 checked:border-green-400 dark:bg-gray-700"
                       defaultChecked
                       type="checkbox"
                     />
-                    <label className="toggle-label block h-6 cursor-pointer overflow-hidden rounded-full bg-gray-300" />
+                    <label className="toggle-label block h-6 cursor-pointer overflow-hidden rounded-full bg-gray-300 dark:bg-gray-600" />
                   </div>
                 </div>
 
                 <div className="flex items-start justify-between">
                   <div>
-                    <h4 className="font-bold text-gray-900">
+                    <h4 className="font-bold text-gray-900 dark:text-gray-100">
                       Show exact location
                     </h4>
-                    <p className="text-gray-500 text-sm">
+                    <p className="text-gray-500 text-sm dark:text-gray-400">
                       Display your precise neighborhood on the map instead of
                       just the city.
                     </p>
                   </div>
                   <div className="relative mr-2 inline-block w-12 select-none align-middle">
                     <input
-                      className="toggle-checkbox absolute block h-6 w-6 cursor-pointer appearance-none rounded-full border-4 bg-white checked:right-0 checked:border-green-400"
+                      className="toggle-checkbox absolute block h-6 w-6 cursor-pointer appearance-none rounded-full border-4 bg-white checked:right-0 checked:border-green-400 dark:bg-gray-700"
                       type="checkbox"
                     />
-                    <label className="toggle-label block h-6 cursor-pointer overflow-hidden rounded-full bg-gray-300" />
+                    <label className="toggle-label block h-6 cursor-pointer overflow-hidden rounded-full bg-gray-300 dark:bg-gray-600" />
                   </div>
                 </div>
 
                 <div className="flex items-start justify-between">
                   <div>
-                    <h4 className="font-bold text-gray-900">
+                    <h4 className="font-bold text-gray-900 dark:text-gray-100">
                       Allow personalized ads
                     </h4>
-                    <p className="text-gray-500 text-sm">
+                    <p className="text-gray-500 text-sm dark:text-gray-400">
                       We use your interests to show you relevant offers.
                     </p>
                   </div>
                   <div className="relative mr-2 inline-block w-12 select-none align-middle">
                     <input
-                      className="toggle-checkbox absolute block h-6 w-6 cursor-pointer appearance-none rounded-full border-4 bg-white checked:right-0 checked:border-green-400"
+                      className="toggle-checkbox absolute block h-6 w-6 cursor-pointer appearance-none rounded-full border-4 bg-white checked:right-0 checked:border-green-400 dark:bg-gray-700"
                       defaultChecked
                       type="checkbox"
                     />
-                    <label className="toggle-label block h-6 cursor-pointer overflow-hidden rounded-full bg-gray-300" />
+                    <label className="toggle-label block h-6 cursor-pointer overflow-hidden rounded-full bg-gray-300 dark:bg-gray-600" />
                   </div>
                 </div>
 
-                <div className="border-gray-100 border-t pt-4">
-                  <button className="font-bold text-blue-600 text-sm hover:underline">
+                <div className="border-gray-100 border-t pt-4 dark:border-gray-700">
+                  <button className="font-bold text-blue-600 text-sm hover:underline dark:text-blue-400">
                     Download my data
                   </button>
                 </div>
@@ -641,24 +669,24 @@ const SettingsView: React.FC = () => {
               <h3 className={sectionTitleClass}>Safety Resources</h3>
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div className="rounded-lg border border-orange-100 bg-orange-50 p-6">
-                  <div className="mb-3 flex items-center gap-2 font-bold text-orange-700">
+                <div className="rounded-lg border border-orange-100 bg-orange-50 p-6 dark:border-orange-900/50 dark:bg-orange-900/20">
+                  <div className="mb-3 flex items-center gap-2 font-bold text-orange-700 dark:text-orange-400">
                     <Shield size={20} />
                     <h4>Tips for Guests</h4>
                   </div>
-                  <ul className="list-inside list-disc space-y-2 text-gray-700 text-sm">
+                  <ul className="list-inside list-disc space-y-2 text-gray-700 text-sm dark:text-gray-300">
                     <li>Read profiles and references carefully.</li>
                     <li>Communicate clearly within the app.</li>
                     <li>Have a backup plan for accommodation.</li>
                     <li>Trust your instincts.</li>
                   </ul>
                 </div>
-                <div className="rounded-lg border border-blue-100 bg-blue-50 p-6">
-                  <div className="mb-3 flex items-center gap-2 font-bold text-blue-700">
+                <div className="rounded-lg border border-blue-100 bg-blue-50 p-6 dark:border-blue-900/50 dark:bg-blue-900/20">
+                  <div className="mb-3 flex items-center gap-2 font-bold text-blue-700 dark:text-blue-400">
                     <Shield size={20} />
                     <h4>Tips for Hosts</h4>
                   </div>
-                  <ul className="list-inside list-disc space-y-2 text-gray-700 text-sm">
+                  <ul className="list-inside list-disc space-y-2 text-gray-700 text-sm dark:text-gray-300">
                     <li>Verify your guests' identity.</li>
                     <li>Set clear house rules upfront.</li>
                     <li>Don't be afraid to say no.</li>
@@ -667,19 +695,19 @@ const SettingsView: React.FC = () => {
                 </div>
               </div>
 
-              <div className="mt-6 flex items-start gap-4 rounded-lg border border-red-100 bg-red-50 p-6">
-                <div className="shrink-0 rounded-full bg-red-100 p-2 text-red-600">
+              <div className="mt-6 flex items-start gap-4 rounded-lg border border-red-100 bg-red-50 p-6 dark:border-red-900/50 dark:bg-red-900/20">
+                <div className="shrink-0 rounded-full bg-red-100 p-2 text-red-600 dark:bg-red-900/30 dark:text-red-400">
                   <AlertTriangle size={24} />
                 </div>
                 <div>
-                  <h4 className="font-bold text-lg text-red-800">
+                  <h4 className="font-bold text-lg text-red-800 dark:text-red-400">
                     In an Emergency
                   </h4>
-                  <p className="mb-3 text-gray-700 text-sm">
+                  <p className="mb-3 text-gray-700 text-sm dark:text-gray-300">
                     If you are in immediate danger, please contact local law
                     enforcement immediately.
                   </p>
-                  <button className="flex items-center gap-2 rounded bg-red-600 px-4 py-2 font-bold text-sm text-white hover:bg-red-700">
+                  <button className="flex items-center gap-2 rounded bg-red-600 px-4 py-2 font-bold text-sm text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600">
                     <Phone size={16} /> View Local Emergency Numbers
                   </button>
                 </div>
@@ -689,13 +717,17 @@ const SettingsView: React.FC = () => {
         );
 
       default:
-        return <div className="text-gray-500">Section under construction.</div>;
+        return (
+          <div className="text-gray-500 dark:text-gray-400">
+            Section under construction.
+          </div>
+        );
     }
   };
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
-      <h1 className="mb-6 font-bold text-2xl text-gray-800">
+      <h1 className="mb-6 font-bold text-2xl text-gray-800 dark:text-gray-100">
         Account & Settings
       </h1>
 
@@ -717,8 +749,8 @@ const SettingsView: React.FC = () => {
             <button
               className={`flex items-center gap-3 rounded-full px-4 py-3 text-left font-bold text-sm transition-all ${
                 activeTab === item.id
-                  ? "bg-orange-50 text-orange-600"
-                  : "text-gray-600 hover:bg-gray-100"
+                  ? "bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400"
+                  : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
               }`}
               key={item.id}
               onClick={() => setActiveTab(item.id as SettingsTab)}
@@ -728,18 +760,18 @@ const SettingsView: React.FC = () => {
             </button>
           ))}
 
-          <div className="my-4 border-gray-200 border-t pt-4">
-            <button className="flex w-full items-center gap-3 rounded-full px-4 py-3 font-bold text-gray-600 text-sm hover:bg-gray-100">
+          <div className="my-4 border-gray-200 border-t pt-4 dark:border-gray-700">
+            <button className="flex w-full items-center gap-3 rounded-full px-4 py-3 font-bold text-gray-600 text-sm hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
               <LogOut size={18} /> Log Out
             </button>
-            <button className="flex w-full items-center gap-3 rounded-full px-4 py-3 font-bold text-red-600 text-sm hover:bg-red-50">
+            <button className="flex w-full items-center gap-3 rounded-full px-4 py-3 font-bold text-red-600 text-sm hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20">
               <Trash2 size={18} /> Delete Account
             </button>
           </div>
         </nav>
 
         {/* Content Area */}
-        <div className="min-h-[600px] flex-1 rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
+        <div className="min-h-[600px] flex-1 rounded-xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
           {renderContent()}
         </div>
       </div>

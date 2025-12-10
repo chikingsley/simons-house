@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { api } from "../lib/api";
 import { useUser } from "../lib/user-context";
+import { ThemeToggle } from "./theme-toggle";
 
 const Navbar: React.FC = () => {
   const location = useLocation();
@@ -47,12 +48,12 @@ const Navbar: React.FC = () => {
     return `flex flex-col items-center gap-1 px-3 py-2 text-xs font-medium transition-colors ${
       isActive
         ? "text-orange-600 border-b-2 border-orange-600"
-        : "text-gray-600 hover:text-orange-500 hover:bg-gray-50"
+        : "text-gray-600 hover:text-orange-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:text-orange-400 dark:hover:bg-gray-800"
     }`;
   };
 
   return (
-    <nav className="sticky top-0 z-50 h-16 border-gray-200 border-b bg-white shadow-sm">
+    <nav className="sticky top-0 z-50 h-16 border-gray-200 border-b bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
       <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4">
         {/* Left: Logo */}
         <div className="flex flex-1 items-center gap-6">
@@ -90,6 +91,11 @@ const Navbar: React.FC = () => {
             <SettingsIcon size={20} />
             <span>Settings</span>
           </Link>
+
+          {/* Theme Toggle */}
+          <div className="ml-2 border-gray-200 border-l pl-4 dark:border-gray-700">
+            <ThemeToggle />
+          </div>
         </div>
       </div>
     </nav>

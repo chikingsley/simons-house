@@ -96,8 +96,9 @@ export type Conversation = {
   status: "active" | "archived";
   requestType?: "host" | "meetup";
   isRequest?: boolean;
-  isBlocked?: boolean; // New field
-  labels?: string[]; // New field
+  isBlocked?: boolean;
+  isIncoming?: boolean; // True if this is a received request/message
+  labels?: string[];
   messages: Message[];
   notes?: string;
 };

@@ -11,10 +11,12 @@ import {
 } from "react-router-dom";
 import { Toaster } from "sonner";
 import DashboardView from "./components/dashboard";
+import { AppErrorBoundary } from "./components/error-boundary";
 import InboxView from "./components/inbox-view";
 import Navbar from "./components/navbar";
 import ProfileView from "./components/profile-view";
 import SettingsView from "./components/settings-view";
+import { ThemeProvider } from "./components/theme-provider";
 import { UserSwitcher } from "./components/user-switcher";
 import { api } from "./lib/api";
 import { UserProvider, useUser } from "./lib/user-context";
@@ -162,12 +164,16 @@ function AppRoutes() {
 }
 
 const App: React.FC = () => (
-  <BrowserRouter>
-    <UserProvider>
-      <AppRoutes />
-      <Toaster position="top-right" richColors />
-    </UserProvider>
-  </BrowserRouter>
+  <AppErrorBoundary>
+    <ThemeProvider>
+      <BrowserRouter>
+        <UserProvider>
+          <AppRoutes />
+          <Toaster position="top-right" richColors />
+        </UserProvider>
+      </BrowserRouter>
+    </ThemeProvider>
+  </AppErrorBoundary>
 );
 
 export default App;

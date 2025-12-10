@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - 2025-12-10
+
+### Added
+
+- **Theming & Resilience**
+  - Introduced global `ThemeProvider`/`ThemeToggle` (light/dark) and set default color scheme in `index.html`
+  - Added app/section error boundaries via `AppErrorBoundary`/`SectionErrorBoundary`
+- **UI Enhancements**
+  - Added motion animation helpers and skeleton loaders for user cards with improved dashboard loading states
+  - Expanded dark-mode styling across navbar, dashboard, inbox, profile, settings, status badges, and identity cards
+- **Data & Flow**
+  - Implemented paginated `/api/users` (limit/offset) with dashboard "Load more" controls and seeded 30 mock users
+  - Added interaction history check endpoint plus gated "Write reference" modal that submits references through `api.createReference`
+- **Tooling & Tests**
+  - Set up Vitest + Testing Library (jsdom, coverage) with tests for API client, status badges, skeletons, and utilities
+
+### Changed
+
+- Made the user switcher draggable and fetch all users via the paginated API
+- Conversation queries now include both sent and received threads and annotate incoming requests
+
 ## [0.1.0] - 2025-12-08
 
 ### Added

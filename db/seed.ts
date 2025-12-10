@@ -155,7 +155,8 @@ const seedUsers = () => {
     "Austin, TX",
   ];
 
-  for (let i = 0; i < 16; i++) {
+  // Generate 30 users for pagination testing
+  for (let i = 0; i < 30; i++) {
     const user = {
       id: `user-${i}`,
       name: names[i % names.length] + (i >= names.length ? ` ${i}` : ""),

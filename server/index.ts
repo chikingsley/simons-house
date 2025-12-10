@@ -78,10 +78,33 @@ function dbRowToProfileExtended(row: Record<string, unknown>): ProfileExtended {
 
 // API Handlers
 const handlers = {
-  // Get all users (for dashboard)
-  getUsers: (): User[] => {
-    const rows = db.query("SELECT * FROM users WHERE id != 'me'").all();
-    return rows.map((row) => dbRowToUser(row as Record<string, unknown>));
+  // Get users with pagination (for dashboard)
+  getUsers: (options?: {
+    limit?: number;
+    offset?: number;
+  }): { users: User[]; total: number; hasMore: boolean } => {
+    const limit = options?.limit ?? 12;
+    const offset = options?.offset ?? 0;
+
+    // Get total count
+    const countRow = db
+      .query("SELECT COUNT(*) as count FROM users WHERE id != 'me'")
+      .get() as { count: number };
+    const total = countRow.count;
+
+    // Get paginated users
+    const rows = db
+      .query("SELECT * FROM users WHERE id != 'me' LIMIT ? OFFSET ?")
+      .all(limit, offset);
+    const users = rows.map((row) =>
+      dbRowToUser(row as Record<string, unknown>)
+    );
+
+    return {
+      users,
+      total,
+      hasMore: offset + users.length < total,
+    };
   },
 
   // Get current user
@@ -148,17 +171,27 @@ const handlers = {
     return profile;
   },
 
-  // Get conversations for current user
+  // Get conversations for current user (both sent and received)
   getConversations: (userId: string): Conversation[] => {
+    // Query conversations where user is either sender OR recipient
     const rows = db
-      .query("SELECT * FROM conversations WHERE user_id = ?")
-      .all(userId);
+      .query(
+        "SELECT * FROM conversations WHERE user_id = ? OR other_user_id = ?"
+      )
+      .all(userId, userId);
 
     return rows.map((row) => {
       const conv = row as Record<string, unknown>;
+      const isRecipient = conv.user_id !== userId;
+
+      // Determine the "other user" from this user's perspective
+      const otherUserId = isRecipient
+        ? (conv.user_id as string)
+        : (conv.other_user_id as string);
+
       const otherUserRow = db
         .query("SELECT * FROM users WHERE id = ?")
-        .get(conv.other_user_id as string);
+        .get(otherUserId);
       const otherUser = otherUserRow
         ? dbRowToUser(otherUserRow as Record<string, unknown>)
         : null;
@@ -171,7 +204,7 @@ const handlers = {
         .all(conv.id as string);
 
       if (!otherUser) {
-        throw new Error(`User ${conv.other_user_id} not found`);
+        throw new Error(`User ${otherUserId} not found`);
       }
 
       return {
@@ -185,6 +218,7 @@ const handlers = {
         isBlocked: Boolean(conv.is_blocked),
         labels: JSON.parse((conv.labels as string) || "[]"),
         notes: conv.notes as string | undefined,
+        isIncoming: isRecipient, // Track if this is an incoming request
         messages: msgs.map((m) => {
           const msg = m as Record<string, unknown>;
           return {
@@ -404,6 +438,16 @@ const handlers = {
     };
   },
 
+  // Check if two users have interaction history (conversations/stays)
+  hasInteractionHistory: (userId: string, otherUserId: string): boolean => {
+    const result = db
+      .query(
+        "SELECT COUNT(*) as count FROM conversations WHERE (user_id = ? AND other_user_id = ?) OR (user_id = ? AND other_user_id = ?)"
+      )
+      .get(userId, otherUserId, otherUserId, userId) as { count: number };
+    return result.count > 0;
+  },
+
   // Create new conversation
   createConversation: (
     userId: string,
@@ -472,8 +516,10 @@ const server = Bun.serve({
     try {
       // Routes
       if (path === "/api/users" && req.method === "GET") {
-        const users = handlers.getUsers();
-        return Response.json(users, { headers: corsHeaders });
+        const limit = Number(url.searchParams.get("limit")) || 12;
+        const offset = Number(url.searchParams.get("offset")) || 0;
+        const result = handlers.getUsers({ limit, offset });
+        return Response.json(result, { headers: corsHeaders });
       }
 
       if (path === "/api/me" && req.method === "GET") {
@@ -559,6 +605,20 @@ const server = Bun.serve({
         const options = await req.json();
         const reference = handlers.createReference(options);
         return Response.json(reference, { headers: corsHeaders });
+      }
+
+      // Check interaction history
+      if (path === "/api/interactions" && req.method === "GET") {
+        const userId = url.searchParams.get("userId");
+        const otherUserId = url.searchParams.get("otherUserId");
+        if (!(userId && otherUserId)) {
+          return Response.json(
+            { error: "Missing userId or otherUserId" },
+            { status: 400, headers: corsHeaders }
+          );
+        }
+        const hasHistory = handlers.hasInteractionHistory(userId, otherUserId);
+        return Response.json({ hasHistory }, { headers: corsHeaders });
       }
 
       return Response.json(

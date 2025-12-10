@@ -38,13 +38,13 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
   const loadUsers = useCallback(async () => {
     try {
-      const users = await api.getUsers();
+      const result = await api.getUsers({ limit: 100 }); // Get all users for switcher
       // Add "me" to the list
       const me = await api.getCurrentUser();
       if (me) {
-        setAllUsers([me, ...users]);
+        setAllUsers([me, ...result.users]);
       } else {
-        setAllUsers(users);
+        setAllUsers(result.users);
       }
     } catch (error) {
       console.error("Failed to fetch users:", error);

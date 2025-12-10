@@ -9,10 +9,26 @@ import type {
 
 const API_BASE = "http://localhost:5174/api";
 
+export type PaginatedUsers = {
+  users: User[];
+  total: number;
+  hasMore: boolean;
+};
+
 export const api = {
-  // Get all users (for dashboard)
-  async getUsers(): Promise<User[]> {
-    const res = await fetch(`${API_BASE}/users`);
+  // Get users with pagination (for dashboard)
+  async getUsers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<PaginatedUsers> {
+    const params = new URLSearchParams();
+    if (options?.limit) {
+      params.set("limit", String(options.limit));
+    }
+    if (options?.offset) {
+      params.set("offset", String(options.offset));
+    }
+    const res = await fetch(`${API_BASE}/users?${params}`);
     return res.json();
   },
 
@@ -130,5 +146,17 @@ export const api = {
       body: JSON.stringify(options),
     });
     return res.json();
+  },
+
+  // Check interaction history between two users
+  async hasInteractionHistory(
+    userId: string,
+    otherUserId: string
+  ): Promise<boolean> {
+    const res = await fetch(
+      `${API_BASE}/interactions?userId=${userId}&otherUserId=${otherUserId}`
+    );
+    const data = await res.json();
+    return data.hasHistory;
   },
 };

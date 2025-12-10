@@ -30,22 +30,22 @@ const VerificationItem: React.FC<VerificationItemProps> = ({
 }) => {
   const getIconColors = () => {
     if (isVerified) {
-      return "bg-green-100 text-green-600";
+      return "bg-green-100 text-green-600 dark:bg-green-500/20 dark:text-green-400";
     }
     if (isPending || useWarningIcon) {
-      return "bg-yellow-100 text-yellow-600";
+      return "bg-yellow-100 text-yellow-600 dark:bg-yellow-500/20 dark:text-yellow-400";
     }
-    return "bg-gray-100 text-gray-400";
+    return "bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500";
   };
 
   const getTextColors = () => {
     if (isVerified) {
-      return "text-gray-800";
+      return "text-gray-800 dark:text-gray-200";
     }
     if (isPending || useWarningIcon) {
-      return "text-gray-500";
+      return "text-gray-500 dark:text-gray-400";
     }
-    return "text-gray-400";
+    return "text-gray-400 dark:text-gray-500";
   };
 
   const renderIcon = () => {
@@ -81,7 +81,7 @@ export const VerificationList: React.FC<VerificationListProps> = ({
 }) => (
   <div className={className}>
     {showTitle && (
-      <h3 className="mb-4 flex items-center gap-2 font-bold text-gray-400 text-gray-900 text-xs uppercase tracking-wider">
+      <h3 className="mb-4 flex items-center gap-2 font-bold text-gray-400 text-xs uppercase tracking-wider dark:text-gray-500">
         Verifications
       </h3>
     )}

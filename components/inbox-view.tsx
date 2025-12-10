@@ -329,15 +329,15 @@ const InboxView: React.FC<InboxProps> = ({
 
   return (
     // Full screen container
-    <div className="flex h-[calc(100vh-64px)] w-full bg-gray-50">
+    <div className="flex h-[calc(100vh-64px)] w-full bg-gray-50 dark:bg-gray-900">
       {/* LEFT: Conversation List */}
       <div
-        className={`flex w-full flex-col border-gray-200 border-r bg-white md:w-[350px] lg:w-[400px] ${selectedId ? "hidden md:flex" : "flex"}`}
+        className={`flex w-full flex-col border-gray-200 border-r bg-white md:w-[350px] lg:w-[400px] dark:border-gray-700 dark:bg-gray-800 ${selectedId ? "hidden md:flex" : "flex"}`}
       >
         {/* Header */}
-        <div className="flex-shrink-0 border-gray-100 border-b p-4">
+        <div className="flex-shrink-0 border-gray-100 border-b p-4 dark:border-gray-700">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-bold text-gray-800 text-xl">
+            <h2 className="font-bold text-gray-800 text-xl dark:text-gray-200">
               {viewArchived ? "Archived Chats" : "Inbox"}
             </h2>
             {viewArchived && (
@@ -353,11 +353,11 @@ const InboxView: React.FC<InboxProps> = ({
           {/* Search */}
           <div className="relative">
             <Search
-              className="absolute top-2.5 left-3 text-gray-400"
+              className="absolute top-2.5 left-3 text-gray-400 dark:text-gray-500"
               size={16}
             />
             <input
-              className="w-full rounded-lg border border-gray-200 bg-gray-50 py-2 pr-3 pl-9 text-sm focus:border-orange-500 focus:outline-none"
+              className="w-full rounded-lg border border-gray-200 bg-gray-50 py-2 pr-3 pl-9 text-sm focus:border-orange-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search messages..."
               type="text"
@@ -396,7 +396,7 @@ const InboxView: React.FC<InboxProps> = ({
               })}
               {(searchQuery || selectedFilterLabels.length > 0) && (
                 <button
-                  className="flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 font-medium text-[11px] text-gray-600 hover:bg-gray-200"
+                  className="flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 font-medium text-[11px] text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                   onClick={clearFilters}
                   type="button"
                 >
@@ -410,7 +410,7 @@ const InboxView: React.FC<InboxProps> = ({
         {/* List */}
         <div className="flex-1 overflow-y-auto">
           {displayedConversations.length === 0 ? (
-            <div className="p-8 text-center text-gray-400 text-sm">
+            <div className="p-8 text-center text-gray-400 text-sm dark:text-gray-500">
               {viewArchived ? "No archived chats." : "No messages yet."}
             </div>
           ) : (
@@ -420,7 +420,7 @@ const InboxView: React.FC<InboxProps> = ({
 
               return (
                 <div
-                  className={`relative flex cursor-pointer gap-3 border-gray-50 border-b p-4 transition-colors hover:bg-gray-50 ${selectedId === conv.id ? "border-orange-100 bg-orange-50/50" : ""}`}
+                  className={`relative flex cursor-pointer gap-3 border-gray-50 border-b p-4 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700 ${selectedId === conv.id ? "border-orange-100 bg-orange-50/50 dark:border-orange-900 dark:bg-orange-500/10" : ""}`}
                   key={conv.id}
                   onClick={() => setSelectedId(conv.id)}
                 >
@@ -439,11 +439,11 @@ const InboxView: React.FC<InboxProps> = ({
                   <div className="min-w-0 flex-1">
                     <div className="mb-1 flex items-baseline justify-between">
                       <h3
-                        className={`truncate text-sm ${selectedId === conv.id ? "font-bold text-orange-900" : "font-semibold text-gray-900"} ${conv.isBlocked ? "text-gray-400 line-through" : ""}`}
+                        className={`truncate text-sm ${selectedId === conv.id ? "font-bold text-orange-900 dark:text-orange-400" : "font-semibold text-gray-900 dark:text-gray-100"} ${conv.isBlocked ? "text-gray-400 line-through dark:text-gray-500" : ""}`}
                       >
                         {conv.otherUser.name}
                       </h3>
-                      <span className="ml-2 whitespace-nowrap text-[10px] text-gray-400">
+                      <span className="ml-2 whitespace-nowrap text-[10px] text-gray-400 dark:text-gray-500">
                         {conv.lastMessageDate}
                       </span>
                     </div>
@@ -451,21 +451,21 @@ const InboxView: React.FC<InboxProps> = ({
                     {/* Tags & Labels */}
                     <div className="mb-1 flex flex-wrap gap-1">
                       {conv.isBlocked && (
-                        <span className="rounded bg-red-100 px-1.5 py-0.5 font-bold text-[9px] text-red-600 uppercase">
+                        <span className="rounded bg-red-100 px-1.5 py-0.5 font-bold text-[9px] text-red-600 uppercase dark:bg-red-500/20 dark:text-red-400">
                           Blocked
                         </span>
                       )}
                       {conv.requestType &&
                         (isMyRequest ? (
-                          <span className="rounded border border-gray-200 bg-gray-100 px-1.5 py-0.5 font-bold text-[9px] text-gray-600 uppercase">
+                          <span className="rounded border border-gray-200 bg-gray-100 px-1.5 py-0.5 font-bold text-[9px] text-gray-600 uppercase dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300">
                             Request Sent
                           </span>
                         ) : (
                           <span
                             className={`rounded px-1.5 py-0.5 font-bold text-[9px] uppercase ${
                               conv.requestType === "host"
-                                ? "bg-green-100 text-green-700"
-                                : "bg-blue-100 text-blue-700"
+                                ? "bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400"
+                                : "bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400"
                             }`}
                           >
                             {conv.requestType === "host"
@@ -475,7 +475,7 @@ const InboxView: React.FC<InboxProps> = ({
                         ))}
                       {conv.labels?.map((label, i) => (
                         <span
-                          className="rounded bg-purple-100 px-1.5 py-0.5 font-bold text-[9px] text-purple-700 uppercase"
+                          className="rounded bg-purple-100 px-1.5 py-0.5 font-bold text-[9px] text-purple-700 uppercase dark:bg-purple-500/20 dark:text-purple-400"
                           key={i}
                         >
                           {label}
@@ -484,7 +484,7 @@ const InboxView: React.FC<InboxProps> = ({
                     </div>
 
                     <p
-                      className={`truncate text-xs ${conv.messages.at(-1).isRead ? "text-gray-500" : "font-medium text-gray-900"}`}
+                      className={`truncate text-xs ${conv.messages.at(-1).isRead ? "text-gray-500 dark:text-gray-400" : "font-medium text-gray-900 dark:text-gray-100"}`}
                     >
                       {conv.messages.at(-1).senderId === currentUserId
                         ? "You: "
@@ -500,9 +500,9 @@ const InboxView: React.FC<InboxProps> = ({
 
         {/* Archive Toggle */}
         {!viewArchived && (
-          <div className="border-gray-200 border-t bg-gray-50 p-4">
+          <div className="border-gray-200 border-t bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900">
             <button
-              className="flex w-full items-center justify-center gap-2 font-semibold text-gray-600 text-sm transition-colors hover:text-gray-800"
+              className="flex w-full items-center justify-center gap-2 font-semibold text-gray-600 text-sm transition-colors hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
               onClick={() => setViewArchived(true)}
             >
               <Archive size={16} /> View Archived Chats
@@ -513,15 +513,15 @@ const InboxView: React.FC<InboxProps> = ({
 
       {/* MIDDLE: Chat Window */}
       <div
-        className={`relative flex flex-1 flex-col bg-gray-100 ${selectedId ? "flex" : "hidden md:flex"}`}
+        className={`relative flex flex-1 flex-col bg-gray-100 dark:bg-gray-800 ${selectedId ? "flex" : "hidden md:flex"}`}
       >
         {selectedConversation ? (
           <>
             {/* Chat Header */}
-            <div className="z-10 flex h-16 shrink-0 items-center justify-between border-gray-200 border-b bg-white p-4 shadow-sm">
+            <div className="z-10 flex h-16 shrink-0 items-center justify-between border-gray-200 border-b bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
               <div className="flex items-center gap-3">
                 <button
-                  className="-ml-2 p-2 text-gray-600 md:hidden"
+                  className="-ml-2 p-2 text-gray-600 md:hidden dark:text-gray-400"
                   onClick={() => setSelectedId(null)}
                   type="button"
                 >
@@ -530,18 +530,18 @@ const InboxView: React.FC<InboxProps> = ({
                 <Link to={`/people/${selectedConversation.otherUser.id}`}>
                   <img
                     alt={selectedConversation.otherUser.name}
-                    className="h-10 w-10 rounded-full border border-gray-200 object-cover transition-opacity hover:opacity-80"
+                    className="h-10 w-10 rounded-full border border-gray-200 object-cover transition-opacity hover:opacity-80 dark:border-gray-600"
                     src={selectedConversation.otherUser.avatarUrl}
                   />
                 </Link>
                 <div>
                   <Link
-                    className="font-bold text-gray-800 text-sm hover:text-orange-600 hover:underline"
+                    className="font-bold text-gray-800 text-sm hover:text-orange-600 hover:underline dark:text-gray-200"
                     to={`/people/${selectedConversation.otherUser.id}`}
                   >
                     {selectedConversation.otherUser.name}
                   </Link>
-                  <div className="flex items-center gap-1 text-gray-500 text-xs">
+                  <div className="flex items-center gap-1 text-gray-500 text-xs dark:text-gray-400">
                     <MapPin size={10} />{" "}
                     {selectedConversation.otherUser.location}
                   </div>
@@ -549,7 +549,7 @@ const InboxView: React.FC<InboxProps> = ({
               </div>
               <div className="relative flex gap-2">
                 <button
-                  className={`rounded-full p-2 hover:bg-gray-100 ${selectedConversation.status === "archived" ? "text-orange-500" : "text-gray-500"}`}
+                  className={`rounded-full p-2 hover:bg-gray-100 dark:hover:bg-gray-700 ${selectedConversation.status === "archived" ? "text-orange-500" : "text-gray-500 dark:text-gray-400"}`}
                   onClick={(e) => toggleArchive(e)}
                   title={
                     selectedConversation.status === "archived"
@@ -562,7 +562,7 @@ const InboxView: React.FC<InboxProps> = ({
 
                 <div className="relative" ref={menuDropdownRef}>
                   <button
-                    className="rounded-full p-2 text-gray-500 hover:bg-gray-100"
+                    className="rounded-full p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
                     onClick={() => setShowMenu(!showMenu)}
                     type="button"
                   >
@@ -570,22 +570,22 @@ const InboxView: React.FC<InboxProps> = ({
                   </button>
 
                   {showMenu && (
-                    <div className="fade-in zoom-in-95 absolute top-full right-0 z-50 mt-2 w-48 animate-in rounded-lg border border-gray-200 bg-white py-1 shadow-xl">
+                    <div className="fade-in zoom-in-95 absolute top-full right-0 z-50 mt-2 w-48 animate-in rounded-lg border border-gray-200 bg-white py-1 shadow-xl dark:border-gray-600 dark:bg-gray-800">
                       <button
-                        className="flex w-full items-center gap-2 px-4 py-2 text-left text-gray-700 text-sm hover:bg-gray-50"
+                        className="flex w-full items-center gap-2 px-4 py-2 text-left text-gray-700 text-sm hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
                         onClick={handleOpenLabelsDropdown}
                         type="button"
                       >
                         <Tag size={14} /> Manage Labels
                       </button>
                       <button
-                        className="flex w-full items-center gap-2 px-4 py-2 text-left text-gray-700 text-sm hover:bg-gray-50"
+                        className="flex w-full items-center gap-2 px-4 py-2 text-left text-gray-700 text-sm hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
                         onClick={() => setShowReportModal(true)}
                       >
                         <Flag size={14} /> Report User
                       </button>
                       <button
-                        className="flex w-full items-center gap-2 px-4 py-2 text-left text-red-600 text-sm hover:bg-red-50"
+                        className="flex w-full items-center gap-2 px-4 py-2 text-left text-red-600 text-sm hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/20"
                         onClick={handleBlockUser}
                         type="button"
                       >
@@ -597,11 +597,11 @@ const InboxView: React.FC<InboxProps> = ({
                   {/* Labels Dropdown */}
                   {showLabelsDropdown && (
                     <div
-                      className="fade-in zoom-in-95 absolute top-full right-0 z-50 mt-2 w-64 animate-in rounded-lg border border-gray-200 bg-white py-2 shadow-xl"
+                      className="fade-in zoom-in-95 absolute top-full right-0 z-50 mt-2 w-64 animate-in rounded-lg border border-gray-200 bg-white py-2 shadow-xl dark:border-gray-600 dark:bg-gray-800"
                       ref={labelsDropdownRef}
                     >
-                      <div className="mb-2 border-gray-100 border-b px-3 pb-2">
-                        <h4 className="font-bold text-gray-700 text-xs uppercase">
+                      <div className="mb-2 border-gray-100 border-b px-3 pb-2 dark:border-gray-700">
+                        <h4 className="font-bold text-gray-700 text-xs uppercase dark:text-gray-300">
                           Manage Labels
                         </h4>
                       </div>
@@ -613,8 +613,8 @@ const InboxView: React.FC<InboxProps> = ({
                             <button
                               className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors ${
                                 isSelected
-                                  ? "bg-gray-100 font-semibold"
-                                  : "hover:bg-gray-50"
+                                  ? "bg-gray-100 font-semibold dark:bg-gray-700"
+                                  : "hover:bg-gray-50 dark:hover:bg-gray-700"
                               }`}
                               key={label.id}
                               onClick={() => handleToggleLabel(label.name)}
@@ -624,18 +624,23 @@ const InboxView: React.FC<InboxProps> = ({
                                 className="h-3 w-3 rounded-full"
                                 style={{ backgroundColor: label.color }}
                               />
-                              <span className="flex-1">{label.name}</span>
+                              <span className="flex-1 dark:text-gray-200">
+                                {label.name}
+                              </span>
                               {isSelected && (
-                                <Check className="text-green-600" size={14} />
+                                <Check
+                                  className="text-green-600 dark:text-green-400"
+                                  size={14}
+                                />
                               )}
                             </button>
                           );
                         })}
                       </div>
-                      <div className="mt-2 border-gray-100 border-t px-3 pt-2">
+                      <div className="mt-2 border-gray-100 border-t px-3 pt-2 dark:border-gray-700">
                         <div className="flex gap-2">
                           <input
-                            className="flex-1 rounded border border-gray-200 px-2 py-1 text-sm outline-none focus:border-orange-500"
+                            className="flex-1 rounded border border-gray-200 bg-white px-2 py-1 text-sm outline-none focus:border-orange-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                             onChange={(e) => setNewLabelName(e.target.value)}
                             onKeyDown={(e) =>
                               e.key === "Enter" && handleCreateLabel()
@@ -663,7 +668,7 @@ const InboxView: React.FC<InboxProps> = ({
             <div className="flex-1 space-y-4 overflow-y-auto p-4 md:p-6">
               {/* Blocked Banner */}
               {selectedConversation.isBlocked && (
-                <div className="mb-4 flex items-center justify-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-center font-bold text-red-700 text-sm">
+                <div className="mb-4 flex items-center justify-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-center font-bold text-red-700 text-sm dark:border-red-800 dark:bg-red-500/20 dark:text-red-400">
                   <Ban size={16} /> You have blocked this user. You cannot send
                   or receive messages.
                 </div>
@@ -673,11 +678,11 @@ const InboxView: React.FC<InboxProps> = ({
               {!selectedConversation.isBlocked &&
                 selectedConversation.isRequest &&
                 selectedConversation.messages[0].senderId !== "me" && (
-                  <div className="mx-auto mb-6 max-w-md rounded-xl border border-gray-200 bg-white p-5 text-center shadow-sm">
-                    <h4 className="mb-1 font-bold text-gray-900">
+                  <div className="mx-auto mb-6 max-w-md rounded-xl border border-gray-200 bg-white p-5 text-center shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                    <h4 className="mb-1 font-bold text-gray-900 dark:text-gray-100">
                       Request Pending
                     </h4>
-                    <p className="mb-4 text-gray-500 text-sm">
+                    <p className="mb-4 text-gray-500 text-sm dark:text-gray-400">
                       {selectedConversation.otherUser.name} sent you a{" "}
                       {selectedConversation.requestType} request.
                     </p>
@@ -685,7 +690,7 @@ const InboxView: React.FC<InboxProps> = ({
                       <button className="flex items-center gap-2 rounded-lg bg-green-500 px-5 py-2 font-bold text-sm text-white shadow-sm transition-transform hover:bg-green-600 active:scale-95">
                         <Check size={16} /> Accept
                       </button>
-                      <button className="flex items-center gap-2 rounded-lg bg-gray-100 px-5 py-2 font-bold text-gray-700 text-sm transition-transform hover:bg-gray-200 active:scale-95">
+                      <button className="flex items-center gap-2 rounded-lg bg-gray-100 px-5 py-2 font-bold text-gray-700 text-sm transition-transform hover:bg-gray-200 active:scale-95 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
                         <X size={16} /> Decline
                       </button>
                     </div>
@@ -695,11 +700,11 @@ const InboxView: React.FC<InboxProps> = ({
               {/* Request Banner for OUTGOING requests */}
               {selectedConversation.isRequest &&
                 selectedConversation.messages[0].senderId === currentUserId && (
-                  <div className="mx-auto mb-6 max-w-md rounded-xl border border-gray-200 bg-gray-50 p-4 text-center">
-                    <h4 className="mb-1 font-bold text-gray-600 text-sm uppercase">
+                  <div className="mx-auto mb-6 max-w-md rounded-xl border border-gray-200 bg-gray-50 p-4 text-center dark:border-gray-700 dark:bg-gray-900">
+                    <h4 className="mb-1 font-bold text-gray-600 text-sm uppercase dark:text-gray-400">
                       Request Sent
                     </h4>
-                    <p className="text-gray-500 text-xs">
+                    <p className="text-gray-500 text-xs dark:text-gray-400">
                       You sent a request to{" "}
                       {selectedConversation.otherUser.name}. Wait for them to
                       respond.
@@ -718,12 +723,12 @@ const InboxView: React.FC<InboxProps> = ({
                       className={`max-w-[75%] rounded-2xl px-5 py-3 text-sm leading-relaxed shadow-sm md:max-w-[70%] ${
                         isMe
                           ? "rounded-br-none bg-orange-500 text-white"
-                          : "rounded-bl-none border border-gray-200 bg-white text-gray-800"
+                          : "rounded-bl-none border border-gray-200 bg-white text-gray-800 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                       }`}
                     >
                       <p>{msg.text}</p>
                       <p
-                        className={`mt-1 text-right text-[10px] opacity-70 ${isMe ? "text-orange-100" : "text-gray-400"}`}
+                        className={`mt-1 text-right text-[10px] opacity-70 ${isMe ? "text-orange-100" : "text-gray-400 dark:text-gray-500"}`}
                       >
                         {new Date(msg.timestamp).toLocaleTimeString([], {
                           hour: "2-digit",
@@ -739,14 +744,14 @@ const InboxView: React.FC<InboxProps> = ({
 
             {/* Input Area */}
             {selectedConversation.isBlocked ? (
-              <div className="border-gray-200 border-t bg-gray-100 p-4 text-center text-gray-500 text-sm italic">
+              <div className="border-gray-200 border-t bg-gray-100 p-4 text-center text-gray-500 text-sm italic dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400">
                 Messaging disabled.
               </div>
             ) : (
-              <div className="shrink-0 border-gray-200 border-t bg-white p-4">
+              <div className="shrink-0 border-gray-200 border-t bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
                 <div className="relative mx-auto flex max-w-4xl items-end gap-2">
                   <textarea
-                    className="h-12 max-h-32 min-h-[48px] w-full resize-none rounded-xl border border-gray-300 bg-gray-50 p-3 pr-10 text-sm shadow-inner focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-200"
+                    className="h-12 max-h-32 min-h-[48px] w-full resize-none rounded-xl border border-gray-300 bg-gray-50 p-3 pr-10 text-sm shadow-inner focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleKeyDown}
                     placeholder="Type a message..."
@@ -763,9 +768,12 @@ const InboxView: React.FC<InboxProps> = ({
             )}
           </>
         ) : (
-          <div className="flex flex-1 flex-col items-center justify-center text-gray-400">
-            <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gray-200">
-              <MessageSquare className="text-gray-400" size={40} />
+          <div className="flex flex-1 flex-col items-center justify-center text-gray-400 dark:text-gray-500">
+            <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
+              <MessageSquare
+                className="text-gray-400 dark:text-gray-500"
+                size={40}
+              />
             </div>
             <p className="font-medium text-lg">Your Messages</p>
             <p className="text-sm">Select a conversation to start messaging</p>
@@ -775,7 +783,7 @@ const InboxView: React.FC<InboxProps> = ({
 
       {/* RIGHT: Mini Profile Sidebar */}
       {selectedConversation && (
-        <div className="z-20 hidden h-full w-[320px] flex-col overflow-y-auto border-gray-200 border-l bg-white shadow-xl xl:flex">
+        <div className="z-20 hidden h-full w-[320px] flex-col overflow-y-auto border-gray-200 border-l bg-white shadow-xl xl:flex dark:border-gray-700 dark:bg-gray-800">
           {/* Identity Card */}
           <UserIdentityCard
             isBlocked={selectedConversation.isBlocked}
@@ -798,13 +806,13 @@ const InboxView: React.FC<InboxProps> = ({
 
             {/* Interests */}
             <div>
-              <h4 className="mb-3 font-bold text-gray-400 text-xs uppercase tracking-wider">
+              <h4 className="mb-3 font-bold text-gray-400 text-xs uppercase tracking-wider dark:text-gray-500">
                 Interests
               </h4>
               <div className="flex flex-wrap gap-1.5">
                 {selectedConversation.otherUser.interests.map((int, i) => (
                   <span
-                    className="rounded border border-blue-100 bg-blue-50 px-2 py-1 font-medium text-[10px] text-blue-700"
+                    className="rounded border border-blue-100 bg-blue-50 px-2 py-1 font-medium text-[10px] text-blue-700 dark:border-blue-800 dark:bg-blue-500/20 dark:text-blue-400"
                     key={i}
                   >
                     {int}
@@ -814,12 +822,12 @@ const InboxView: React.FC<InboxProps> = ({
             </div>
 
             {/* Private Notes */}
-            <div className="rounded-lg border border-yellow-100 bg-yellow-50 p-4">
-              <div className="mb-2 flex items-center gap-2 font-bold text-xs text-yellow-800 uppercase">
+            <div className="rounded-lg border border-yellow-100 bg-yellow-50 p-4 dark:border-yellow-800 dark:bg-yellow-500/20">
+              <div className="mb-2 flex items-center gap-2 font-bold text-xs text-yellow-800 uppercase dark:text-yellow-400">
                 <FileText size={12} /> Private Note
               </div>
               <textarea
-                className="w-full resize-none border-0 bg-transparent text-gray-700 text-sm placeholder-gray-400 outline-none"
+                className="w-full resize-none border-0 bg-transparent text-gray-700 text-sm placeholder-gray-400 outline-none dark:text-gray-300 dark:placeholder-gray-500"
                 onChange={handleNoteChange}
                 placeholder="Add a private note about this person..."
                 rows={3}
@@ -833,12 +841,12 @@ const InboxView: React.FC<InboxProps> = ({
       {/* Report Modal */}
       {showReportModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
-          <div className="fade-in zoom-in-95 w-full max-w-sm animate-in rounded-lg bg-white p-6 shadow-xl">
-            <div className="mb-4 flex items-center gap-2 text-red-600">
+          <div className="fade-in zoom-in-95 w-full max-w-sm animate-in rounded-lg bg-white p-6 shadow-xl dark:bg-gray-800">
+            <div className="mb-4 flex items-center gap-2 text-red-600 dark:text-red-400">
               <AlertCircle size={24} />
               <h3 className="font-bold text-lg">Report User</h3>
             </div>
-            <p className="mb-4 text-gray-600 text-sm">
+            <p className="mb-4 text-gray-600 text-sm dark:text-gray-400">
               Why are you reporting {selectedConversation?.otherUser.name}? This
               will also block them.
             </p>
@@ -852,7 +860,7 @@ const InboxView: React.FC<InboxProps> = ({
                 "Other",
               ].map((reason) => (
                 <button
-                  className="w-full rounded border border-gray-200 px-4 py-3 text-left font-medium text-sm transition-colors hover:bg-gray-50"
+                  className="w-full rounded border border-gray-200 bg-white px-4 py-3 text-left font-medium text-sm transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                   key={reason}
                   onClick={() => handleReportSubmit(reason)}
                 >
@@ -862,7 +870,7 @@ const InboxView: React.FC<InboxProps> = ({
             </div>
 
             <button
-              className="w-full py-2 font-bold text-gray-500 text-sm hover:text-gray-700"
+              className="w-full py-2 font-bold text-gray-500 text-sm hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
               onClick={() => setShowReportModal(false)}
             >
               Cancel

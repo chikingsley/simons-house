@@ -64,6 +64,10 @@ const ProfileView: React.FC<ProfileViewProps> = ({
   const [refText, setRefText] = useState("");
   const [isSubmittingRef, setIsSubmittingRef] = useState(false);
 
+  // Interaction history state (for enabling Write Reference button)
+  const [hasInteraction, setHasInteraction] = useState(false);
+  const [checkingInteraction, setCheckingInteraction] = useState(false);
+
   // Interest Editing State
   const [newInterest, setNewInterest] = useState("");
 
@@ -115,15 +119,45 @@ const ProfileView: React.FC<ProfileViewProps> = ({
     loadProfile();
   }, [viewingProfileId, currentUserId]);
 
+  // Effect to check interaction history when viewing someone else's profile
+  useEffect(() => {
+    const checkInteraction = async () => {
+      // Only check if viewing someone else's profile
+      if (
+        !viewingProfileId ||
+        viewingProfileId === "me" ||
+        viewingProfileId === currentUserId
+      ) {
+        setHasInteraction(false);
+        return;
+      }
+
+      setCheckingInteraction(true);
+      try {
+        const hasHistory = await api.hasInteractionHistory(
+          currentUserId,
+          viewingProfileId
+        );
+        setHasInteraction(hasHistory);
+      } catch (error) {
+        console.error("Failed to check interaction history:", error);
+        setHasInteraction(false);
+      } finally {
+        setCheckingInteraction(false);
+      }
+    };
+    checkInteraction();
+  }, [viewingProfileId, currentUserId]);
+
   const isMe =
     !viewingProfileId ||
     viewingProfileId === "me" ||
     viewingProfileId === currentUserId;
 
   const inputClass =
-    "w-full bg-white text-gray-900 border border-gray-300 rounded px-2 py-1 outline-none focus:border-orange-500 placeholder-gray-400";
+    "w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 outline-none focus:border-orange-500 placeholder-gray-400 dark:placeholder-gray-500";
   const textareaClass =
-    "w-full bg-white text-gray-900 p-3 border border-gray-300 rounded-lg focus:border-orange-500 outline-none resize-y placeholder-gray-400";
+    "w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:border-orange-500 outline-none resize-y placeholder-gray-400 dark:placeholder-gray-500";
 
   const handleStatusChange = async (status: UserStatus) => {
     if (!profile) {
@@ -376,7 +410,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
       />
 
       {/* Cover Photo */}
-      <div className="group relative h-64 w-full bg-gray-300 md:h-80">
+      <div className="group relative h-64 w-full overflow-hidden bg-gray-300 md:h-80 dark:bg-gray-700">
         <img
           alt="Cover"
           className="h-full w-full object-cover"
@@ -395,8 +429,18 @@ const ProfileView: React.FC<ProfileViewProps> = ({
         {!isMe && (
           <div className="absolute right-6 bottom-6 z-20 flex gap-3">
             <button
-              className="flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-blue-700 active:scale-95"
+              className={`flex items-center gap-2 rounded-lg px-5 py-2 font-bold text-white shadow-lg ${
+                hasInteraction && !checkingInteraction
+                  ? "bg-blue-600 transition-transform hover:scale-105 hover:bg-blue-700 active:scale-95"
+                  : "cursor-not-allowed bg-gray-400"
+              }`}
+              disabled={!hasInteraction || checkingInteraction}
               onClick={() => setShowWriteRefModal(true)}
+              title={
+                hasInteraction
+                  ? "Write a reference for this user"
+                  : "You can only write a reference after you've stayed with or met this person"
+              }
             >
               <PenLine size={18} /> Write Reference
             </button>
@@ -423,12 +467,15 @@ const ProfileView: React.FC<ProfileViewProps> = ({
         {/* LEFT SIDEBAR (Consolidated Identity Card) */}
         <aside className="-mt-24 md:-mt-32 relative z-10 flex w-full flex-shrink-0 flex-col gap-6 md:w-[340px]">
           {/* Identity Card */}
-          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
+          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
             {/* Response Rate Top Banner */}
-            <div className="flex items-center justify-between border-green-100 border-b bg-green-50 px-4 py-2 font-semibold text-green-800 text-xs">
+            <div className="flex items-center justify-between border-green-100 border-b bg-green-50 px-4 py-2 font-semibold text-green-800 text-xs dark:border-green-500/20 dark:bg-green-500/20 dark:text-green-400">
               <span className="flex items-center gap-1">
-                <Zap className="fill-green-600 text-green-600" size={12} /> Very
-                Responsive
+                <Zap
+                  className="fill-green-600 text-green-600 dark:fill-green-400 dark:text-green-400"
+                  size={12}
+                />{" "}
+                Very Responsive
               </span>
               <span>{profile.responseRate}% Response Rate</span>
             </div>
@@ -437,7 +484,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
               <div className="group relative mb-4 inline-block">
                 <img
                   alt={profile.name}
-                  className="h-48 w-48 rounded-full border-[6px] border-white bg-white object-cover shadow-md"
+                  className="h-48 w-48 rounded-full border-[6px] border-white bg-white object-cover shadow-md dark:border-gray-800 dark:bg-gray-800"
                   src={profile.avatarUrl}
                 />
                 {isMe && (
@@ -452,28 +499,28 @@ const ProfileView: React.FC<ProfileViewProps> = ({
 
               {isEditing ? (
                 <input
-                  className="mb-1 w-full border-gray-300 border-b text-center font-bold text-2xl outline-none focus:border-orange-500"
+                  className="mb-1 w-full border-gray-300 border-b bg-transparent text-center font-bold text-2xl text-gray-900 outline-none focus:border-orange-500 dark:border-gray-600 dark:text-gray-100"
                   onChange={(e) => handleInputChange("name", e.target.value)}
                   value={profile.name}
                 />
               ) : (
-                <h1 className="mb-1 font-bold text-3xl text-gray-900">
+                <h1 className="mb-1 font-bold text-3xl text-gray-900 dark:text-gray-100">
                   {profile.name}
                 </h1>
               )}
 
-              <div className="flex items-center justify-center gap-1 font-medium text-gray-600">
+              <div className="flex items-center justify-center gap-1 font-medium text-gray-600 dark:text-gray-400">
                 <MapPin size={16} />
                 <span>{profile.location}</span>
               </div>
 
               {/* Response Info */}
-              <div className="mt-2 flex items-center justify-center gap-1 font-semibold text-gray-500 text-xs">
+              <div className="mt-2 flex items-center justify-center gap-1 font-semibold text-gray-500 text-xs dark:text-gray-400">
                 <Zap className="text-orange-500" size={12} />{" "}
                 {profile.responseTime}
               </div>
 
-              <div className="mt-2 text-gray-500 text-sm">
+              <div className="mt-2 text-gray-500 text-sm dark:text-gray-400">
                 Member since {profile.joinedDate}
               </div>
 
@@ -497,7 +544,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                 )}
 
                 {isMe && showStatusDropdown && (
-                  <div className="fade-in zoom-in-95 absolute top-full left-0 z-50 mt-2 w-full animate-in overflow-hidden rounded-lg border border-gray-200 bg-white text-left shadow-xl duration-200">
+                  <div className="fade-in zoom-in-95 absolute top-full left-0 z-50 mt-2 w-full animate-in overflow-hidden rounded-lg border border-gray-200 bg-white text-left shadow-xl duration-200 dark:border-gray-700 dark:bg-gray-800">
                     {(
                       [
                         "accepting_guests",
@@ -507,7 +554,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                       ] as UserStatus[]
                     ).map((s) => (
                       <button
-                        className="flex w-full items-center gap-2 border-gray-50 border-b px-4 py-3 text-left font-medium text-gray-700 text-sm last:border-0 hover:bg-gray-50"
+                        className="flex w-full items-center gap-2 border-gray-50 border-b px-4 py-3 text-left font-medium text-gray-700 text-sm last:border-0 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
                         key={s}
                         onClick={() => handleStatusChange(s)}
                       >
@@ -523,20 +570,20 @@ const ProfileView: React.FC<ProfileViewProps> = ({
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-2 divide-x divide-gray-100 border-gray-100 border-t">
-              <div className="cursor-pointer p-4 text-center transition-colors hover:bg-gray-50">
-                <div className="font-bold text-2xl text-gray-900">
+            <div className="grid grid-cols-2 divide-x divide-gray-100 border-gray-100 border-t dark:divide-gray-700 dark:border-gray-700">
+              <div className="cursor-pointer p-4 text-center transition-colors hover:bg-gray-50 dark:hover:bg-gray-700">
+                <div className="font-bold text-2xl text-gray-900 dark:text-gray-100">
                   {profile.referencesCount}
                 </div>
-                <div className="font-bold text-gray-400 text-xs uppercase tracking-wider">
+                <div className="font-bold text-gray-400 text-xs uppercase tracking-wider dark:text-gray-500">
                   References
                 </div>
               </div>
-              <div className="cursor-pointer p-4 text-center transition-colors hover:bg-gray-50">
-                <div className="font-bold text-2xl text-gray-900">
+              <div className="cursor-pointer p-4 text-center transition-colors hover:bg-gray-50 dark:hover:bg-gray-700">
+                <div className="font-bold text-2xl text-gray-900 dark:text-gray-100">
                   {profile.friendsCount}
                 </div>
-                <div className="font-bold text-gray-400 text-xs uppercase tracking-wider">
+                <div className="font-bold text-gray-400 text-xs uppercase tracking-wider dark:text-gray-500">
                   Friends
                 </div>
               </div>
@@ -544,14 +591,14 @@ const ProfileView: React.FC<ProfileViewProps> = ({
 
             {/* Verifications List - Integrated into Main Card */}
             <VerificationList
-              className="border-gray-100 border-t p-6"
+              className="border-gray-100 border-t p-6 dark:border-gray-700"
               verification={profile.verification}
             />
 
             {/* Last Login Footer */}
-            <div className="border-gray-100 border-t bg-gray-50 p-4 text-center text-gray-400 text-xs">
+            <div className="border-gray-100 border-t bg-gray-50 p-4 text-center text-gray-400 text-xs dark:border-gray-700 dark:bg-gray-800 dark:text-gray-500">
               Last active:{" "}
-              <span className="font-semibold text-gray-600">
+              <span className="font-semibold text-gray-600 dark:text-gray-400">
                 {profile.lastLogin}
               </span>
             </div>
@@ -559,7 +606,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
             {/* Edit Toggle (Only for Me) */}
             {isMe && (
               <button
-                className={`flex w-full items-center justify-center gap-2 border-gray-100 border-t py-3 font-bold text-sm transition-colors hover:bg-gray-50 ${isEditing ? "bg-green-50 text-green-600" : "text-gray-600"}`}
+                className={`flex w-full items-center justify-center gap-2 border-gray-100 border-t py-3 font-bold text-sm transition-colors hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700 ${isEditing ? "bg-green-50 text-green-600 dark:bg-green-500/20 dark:text-green-400" : "text-gray-600 dark:text-gray-400"}`}
                 disabled={isSaving}
                 onClick={() => {
                   if (isEditing) {
@@ -592,8 +639,8 @@ const ProfileView: React.FC<ProfileViewProps> = ({
         {/* RIGHT MAIN CONTENT */}
         <main className="min-w-0 flex-1 md:mt-6">
           {/* Navigation Tabs */}
-          <div className="mb-6 rounded-xl border border-gray-200 bg-white shadow-sm">
-            <div className="scrollbar-hide flex overflow-x-auto">
+          <div className="mb-6 rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+            <div className="flex">
               {[
                 { id: "about", label: "About", icon: Info },
                 { id: "home", label: "My Home", icon: Home },
@@ -609,20 +656,27 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                   icon: Star,
                   count: profile.referencesCount,
                 },
-              ].map((tab) => (
+              ].map((tab, index, arr) => (
                 <button
-                  className={`flex flex-1 items-center justify-center gap-2 whitespace-nowrap border-b-2 px-6 py-4 font-bold text-sm transition-colors ${
+                  className={`flex flex-1 items-center justify-center gap-1 border-b-2 px-2 py-3 font-bold text-xs transition-colors sm:gap-2 sm:px-4 sm:py-4 sm:text-sm ${
+                    index === 0 ? "rounded-tl-xl" : ""
+                  } ${index === arr.length - 1 ? "rounded-tr-xl" : ""} ${
                     activeTab === tab.id
-                      ? "border-orange-500 bg-orange-50/50 text-orange-600"
-                      : "border-transparent text-gray-500 hover:bg-gray-50 hover:text-gray-800"
+                      ? "border-orange-500 bg-orange-50 text-orange-600 dark:bg-orange-500/20 dark:text-orange-400"
+                      : "border-transparent text-gray-500 hover:bg-gray-50 hover:text-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
                   }`}
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
                 >
-                  <tab.icon size={18} />
-                  {tab.label}
+                  <tab.icon className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
+                  <span className="xs:inline hidden sm:inline">
+                    {tab.label}
+                  </span>
+                  <span className="inline sm:hidden">
+                    {tab.id === "references" ? "Refs" : tab.label}
+                  </span>
                   {tab.count !== undefined && (
-                    <span className="rounded-full bg-gray-200 px-2 py-0.5 text-gray-600 text-xs">
+                    <span className="hidden rounded-full bg-gray-200 px-1.5 py-0.5 text-[10px] text-gray-600 sm:inline sm:px-2 sm:text-xs dark:bg-gray-700 dark:text-gray-400">
                       {tab.count}
                     </span>
                   )}
@@ -632,21 +686,24 @@ const ProfileView: React.FC<ProfileViewProps> = ({
           </div>
 
           {/* TAB CONTENT */}
-          <div className="min-h-[500px] rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
+          <div className="min-h-[500px] rounded-xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
             {activeTab === "about" && (
               <div className="fade-in animate-in space-y-10">
                 {/* Redesigned Overview Grid */}
                 <section>
-                  <h2 className="mb-4 flex items-center gap-2 font-bold text-gray-800 text-xl">
+                  <h2 className="mb-4 flex items-center gap-2 font-bold text-gray-800 text-xl dark:text-gray-200">
                     Overview
                   </h2>
                   <div className="flex flex-col gap-4">
                     {/* Row 1: From | Education */}
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <div className="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 p-5">
-                        <MapPin className="shrink-0 text-gray-400" size={18} />
+                      <div className="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 p-5 dark:border-gray-700 dark:bg-gray-800">
+                        <MapPin
+                          className="shrink-0 text-gray-400 dark:text-gray-500"
+                          size={18}
+                        />
                         <div className="flex-1">
-                          <span className="block font-bold text-gray-400 text-xs uppercase">
+                          <span className="block font-bold text-gray-400 text-xs uppercase dark:text-gray-500">
                             From
                           </span>
                           {isEditing ? (
@@ -658,19 +715,19 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                               value={profile.location}
                             />
                           ) : (
-                            <span className="font-medium text-gray-900">
+                            <span className="font-medium text-gray-900 dark:text-gray-200">
                               {profile.location}
                             </span>
                           )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 p-5">
+                      <div className="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 p-5 dark:border-gray-700 dark:bg-gray-800">
                         <GraduationCap
-                          className="shrink-0 text-gray-400"
+                          className="shrink-0 text-gray-400 dark:text-gray-500"
                           size={18}
                         />
                         <div className="flex-1">
-                          <span className="block font-bold text-gray-400 text-xs uppercase">
+                          <span className="block font-bold text-gray-400 text-xs uppercase dark:text-gray-500">
                             Education
                           </span>
                           {isEditing ? (
@@ -682,7 +739,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                               value={profile.education}
                             />
                           ) : (
-                            <span className="font-medium text-gray-900">
+                            <span className="font-medium text-gray-900 dark:text-gray-200">
                               {profile.education}
                             </span>
                           )}
@@ -692,13 +749,13 @@ const ProfileView: React.FC<ProfileViewProps> = ({
 
                     {/* Row 2: Gender | Age | Occupation */}
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                      <div className="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 p-5">
+                      <div className="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 p-5 dark:border-gray-700 dark:bg-gray-800">
                         <UserIcon
-                          className="shrink-0 text-gray-400"
+                          className="shrink-0 text-gray-400 dark:text-gray-500"
                           size={18}
                         />
                         <div className="flex-1">
-                          <span className="block font-bold text-gray-400 text-xs uppercase">
+                          <span className="block font-bold text-gray-400 text-xs uppercase dark:text-gray-500">
                             Gender
                           </span>
                           {isEditing ? (
@@ -710,19 +767,19 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                               value={profile.gender}
                             />
                           ) : (
-                            <span className="font-medium text-gray-900">
+                            <span className="font-medium text-gray-900 dark:text-gray-200">
                               {profile.gender}
                             </span>
                           )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 p-5">
+                      <div className="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 p-5 dark:border-gray-700 dark:bg-gray-800">
                         <Calendar
-                          className="shrink-0 text-gray-400"
+                          className="shrink-0 text-gray-400 dark:text-gray-500"
                           size={18}
                         />
                         <div className="flex-1">
-                          <span className="block font-bold text-gray-400 text-xs uppercase">
+                          <span className="block font-bold text-gray-400 text-xs uppercase dark:text-gray-500">
                             Age
                           </span>
                           {isEditing ? (
@@ -735,19 +792,19 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                               value={profile.age}
                             />
                           ) : (
-                            <span className="font-medium text-gray-900">
+                            <span className="font-medium text-gray-900 dark:text-gray-200">
                               {profile.age}
                             </span>
                           )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 p-5">
+                      <div className="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 p-5 dark:border-gray-700 dark:bg-gray-800">
                         <Briefcase
-                          className="shrink-0 text-gray-400"
+                          className="shrink-0 text-gray-400 dark:text-gray-500"
                           size={18}
                         />
                         <div className="flex-1">
-                          <span className="block font-bold text-gray-400 text-xs uppercase">
+                          <span className="block font-bold text-gray-400 text-xs uppercase dark:text-gray-500">
                             Occupation
                           </span>
                           {isEditing ? (
@@ -759,7 +816,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                               value={profile.occupation}
                             />
                           ) : (
-                            <span className="font-medium text-gray-900">
+                            <span className="font-medium text-gray-900 dark:text-gray-200">
                               {profile.occupation}
                             </span>
                           )}
@@ -771,19 +828,19 @@ const ProfileView: React.FC<ProfileViewProps> = ({
 
                 {/* Interests Tags */}
                 <section>
-                  <h3 className="mb-3 font-bold text-gray-900 text-lg">
+                  <h3 className="mb-3 font-bold text-gray-900 text-lg dark:text-gray-100">
                     Interests
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {profile.interests?.map((interest, i) => (
                       <span
-                        className="flex items-center gap-2 rounded-lg border border-blue-100 bg-blue-50 px-3 py-1.5 font-medium text-blue-800 text-sm"
+                        className="flex items-center gap-2 rounded-lg border border-blue-100 bg-blue-50 px-3 py-1.5 font-medium text-blue-800 text-sm dark:border-blue-500/20 dark:bg-blue-500/20 dark:text-blue-400"
                         key={i}
                       >
                         {interest}
                         {isEditing && (
                           <button
-                            className="text-blue-400 hover:text-blue-600"
+                            className="text-blue-400 hover:text-blue-600 dark:hover:text-blue-300"
                             onClick={() => handleRemoveInterest(interest)}
                           >
                             <X size={14} />
@@ -794,7 +851,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                     {isEditing && (
                       <div className="flex gap-2">
                         <input
-                          className="w-32 rounded border border-gray-300 px-2 py-1 text-sm outline-none focus:border-blue-500"
+                          className="w-32 rounded border border-gray-300 bg-white px-2 py-1 text-gray-900 text-sm outline-none focus:border-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
                           onChange={(e) => setNewInterest(e.target.value)}
                           onKeyDown={(e) =>
                             e.key === "Enter" && handleAddInterest()
@@ -817,12 +874,12 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                 {/* About Me */}
                 <section>
                   <div className="mb-3 flex items-center justify-between">
-                    <h3 className="font-bold text-gray-900 text-lg">
+                    <h3 className="font-bold text-gray-900 text-lg dark:text-gray-100">
                       About Me
                     </h3>
                     {isEditing && (
                       <button
-                        className="flex items-center gap-1 rounded px-2 py-1 font-bold text-purple-600 text-xs transition-colors hover:bg-purple-50"
+                        className="flex items-center gap-1 rounded px-2 py-1 font-bold text-purple-600 text-xs transition-colors hover:bg-purple-50 dark:text-purple-400 dark:hover:bg-purple-500/20"
                         onClick={() => handleAIMagic("aboutMe")}
                       >
                         <Sparkles size={14} /> AI Polish
@@ -838,7 +895,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                       value={profile.aboutMe}
                     />
                   ) : (
-                    <p className="whitespace-pre-wrap text-gray-700 leading-relaxed">
+                    <p className="whitespace-pre-wrap text-gray-700 leading-relaxed dark:text-gray-300">
                       {profile.aboutMe}
                     </p>
                   )}
@@ -847,12 +904,12 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                 {/* Why I'm on CS */}
                 <section>
                   <div className="mb-3 flex items-center justify-between">
-                    <h3 className="font-bold text-gray-900 text-lg">
+                    <h3 className="font-bold text-gray-900 text-lg dark:text-gray-100">
                       Why I'm on Couchsurfing
                     </h3>
                     {isEditing && (
                       <button
-                        className="flex items-center gap-1 rounded px-2 py-1 font-bold text-purple-600 text-xs transition-colors hover:bg-purple-50"
+                        className="flex items-center gap-1 rounded px-2 py-1 font-bold text-purple-600 text-xs transition-colors hover:bg-purple-50 dark:text-purple-400 dark:hover:bg-purple-500/20"
                         onClick={() => handleAIMagic("whyImOnCouchsurfing")}
                       >
                         <Sparkles size={14} /> AI Polish
@@ -868,7 +925,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                       value={profile.whyImOnCouchsurfing}
                     />
                   ) : (
-                    <p className="whitespace-pre-wrap text-gray-700 leading-relaxed">
+                    <p className="whitespace-pre-wrap text-gray-700 leading-relaxed dark:text-gray-300">
                       {profile.whyImOnCouchsurfing}
                     </p>
                   )}
@@ -877,7 +934,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                 {/* Teach Learn Share */}
                 <section>
                   <div className="mb-3 flex items-center justify-between">
-                    <h3 className="font-bold text-gray-900 text-lg">
+                    <h3 className="font-bold text-gray-900 text-lg dark:text-gray-100">
                       Teach, Learn, Share
                     </h3>
                   </div>
@@ -890,7 +947,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                       value={profile.teachLearnShare}
                     />
                   ) : (
-                    <p className="whitespace-pre-wrap text-gray-700 leading-relaxed">
+                    <p className="whitespace-pre-wrap text-gray-700 leading-relaxed dark:text-gray-300">
                       {profile.teachLearnShare}
                     </p>
                   )}
@@ -898,13 +955,13 @@ const ProfileView: React.FC<ProfileViewProps> = ({
 
                 {/* Countries */}
                 <section>
-                  <h3 className="mb-3 font-bold text-gray-900 text-lg">
+                  <h3 className="mb-3 font-bold text-gray-900 text-lg dark:text-gray-100">
                     Countries I've Visited
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {profile.countriesVisited.map((c) => (
                       <span
-                        className="flex items-center gap-2 rounded-lg border border-orange-100 bg-orange-50 px-3 py-1.5 font-medium text-orange-800 text-sm"
+                        className="flex items-center gap-2 rounded-lg border border-orange-100 bg-orange-50 px-3 py-1.5 font-medium text-orange-800 text-sm dark:border-orange-500/20 dark:bg-orange-500/20 dark:text-orange-400"
                         key={c}
                       >
                         {c}
@@ -917,7 +974,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                       </span>
                     ))}
                     {isEditing && (
-                      <button className="rounded-lg border border-gray-200 bg-gray-100 px-3 py-1.5 font-medium text-gray-600 text-sm hover:bg-gray-200">
+                      <button className="rounded-lg border border-gray-200 bg-gray-100 px-3 py-1.5 font-medium text-gray-600 text-sm hover:bg-gray-200 dark:border-gray-700 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600">
                         + Add Country
                       </button>
                     )}
@@ -929,9 +986,11 @@ const ProfileView: React.FC<ProfileViewProps> = ({
             {activeTab === "home" && (
               <div className="fade-in animate-in space-y-8">
                 <div className="flex items-center justify-between">
-                  <h2 className="font-bold text-2xl text-gray-800">My Home</h2>
+                  <h2 className="font-bold text-2xl text-gray-800 dark:text-gray-200">
+                    My Home
+                  </h2>
                   <div
-                    className={`flex items-center gap-2 rounded-full px-4 py-1.5 font-bold text-sm ${profile.status.includes("not") ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}
+                    className={`flex items-center gap-2 rounded-full px-4 py-1.5 font-bold text-sm ${profile.status.includes("not") ? "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400" : "bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400"}`}
                   >
                     <Home size={16} /> {getStatusLabel(profile.status)}
                   </div>
@@ -959,10 +1018,10 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                     },
                   ].map((item) => (
                     <div
-                      className="flex items-center justify-between border-gray-100 border-b pb-2"
+                      className="flex items-center justify-between border-gray-100 border-b pb-2 dark:border-gray-700"
                       key={item.key}
                     >
-                      <span className="font-medium text-gray-500">
+                      <span className="font-medium text-gray-500 dark:text-gray-400">
                         {item.label}
                       </span>
                       {isEditing ? (
@@ -980,7 +1039,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                           />
                         ) : (
                           <input
-                            className="w-1/2 border-gray-300 border-b bg-white text-right text-gray-900 outline-none focus:border-orange-500"
+                            className="w-1/2 border-gray-300 border-b bg-white text-right text-gray-900 outline-none focus:border-orange-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
                             onChange={(e) =>
                               handleHomeDetailChange(item.key, e.target.value)
                             }
@@ -992,7 +1051,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                           />
                         )
                       ) : (
-                        <span className="text-right font-semibold text-gray-900">
+                        <span className="text-right font-semibold text-gray-900 dark:text-gray-200">
                           {item.bool
                             ? profile.homeDetails[
                                 item.key as keyof typeof profile.homeDetails
@@ -1009,7 +1068,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                 </div>
 
                 <section>
-                  <h3 className="mb-3 font-bold text-gray-900 text-lg">
+                  <h3 className="mb-3 font-bold text-gray-900 text-lg dark:text-gray-100">
                     Roommate Situation
                   </h3>
                   {isEditing ? (
@@ -1024,14 +1083,14 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                       value={profile.homeDetails.roommateSituation}
                     />
                   ) : (
-                    <p className="text-gray-700 leading-relaxed">
+                    <p className="text-gray-700 leading-relaxed dark:text-gray-300">
                       {profile.homeDetails.roommateSituation}
                     </p>
                   )}
                 </section>
 
                 <section>
-                  <h3 className="mb-3 font-bold text-gray-900 text-lg">
+                  <h3 className="mb-3 font-bold text-gray-900 text-lg dark:text-gray-100">
                     Public Transport
                   </h3>
                   {isEditing ? (
@@ -1046,7 +1105,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                       value={profile.homeDetails.publicTransport}
                     />
                   ) : (
-                    <p className="text-gray-700 leading-relaxed">
+                    <p className="text-gray-700 leading-relaxed dark:text-gray-300">
                       {profile.homeDetails.publicTransport}
                     </p>
                   )}
@@ -1057,7 +1116,9 @@ const ProfileView: React.FC<ProfileViewProps> = ({
             {activeTab === "photos" && (
               <div className="fade-in animate-in">
                 <div className="mb-6 flex items-center justify-between">
-                  <h2 className="font-bold text-2xl text-gray-800">Photos</h2>
+                  <h2 className="font-bold text-2xl text-gray-800 dark:text-gray-200">
+                    Photos
+                  </h2>
                   {isMe && (
                     <button
                       className="rounded-lg bg-orange-500 px-4 py-2 font-bold text-white shadow-sm transition-colors hover:bg-orange-600"
@@ -1070,7 +1131,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                 <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
                   {profile.photos.map((photo, i) => (
                     <div
-                      className="group relative aspect-square cursor-pointer overflow-hidden rounded-lg bg-gray-100 transition-opacity hover:opacity-90"
+                      className="group relative aspect-square cursor-pointer overflow-hidden rounded-lg bg-gray-100 transition-opacity hover:opacity-90 dark:bg-gray-700"
                       key={i}
                     >
                       <img
@@ -1095,13 +1156,13 @@ const ProfileView: React.FC<ProfileViewProps> = ({
             {activeTab === "references" && (
               <div className="fade-in animate-in space-y-6">
                 <div className="flex items-center justify-between">
-                  <h2 className="font-bold text-2xl text-gray-800">
+                  <h2 className="font-bold text-2xl text-gray-800 dark:text-gray-200">
                     References
                   </h2>
                 </div>
                 {profile.references.map((ref) => (
                   <div
-                    className="flex gap-4 border-gray-100 border-b pb-6 last:border-0"
+                    className="flex gap-4 border-gray-100 border-b pb-6 last:border-0 dark:border-gray-700"
                     key={ref.id}
                   >
                     <Link to={`/people/${ref.authorId}`}>
@@ -1115,40 +1176,42 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                       <div className="mb-2 flex items-start justify-between">
                         <div>
                           <Link
-                            className="font-bold text-gray-900 hover:text-orange-600 hover:underline"
+                            className="font-bold text-gray-900 hover:text-orange-600 hover:underline dark:text-gray-100 dark:hover:text-orange-400"
                             to={`/people/${ref.authorId}`}
                           >
                             {ref.authorName}
                           </Link>
-                          <p className="font-semibold text-gray-500 text-xs uppercase">
+                          <p className="font-semibold text-gray-500 text-xs uppercase dark:text-gray-400">
                             {ref.type} • {ref.authorLocation}
                           </p>
                         </div>
                         <div
-                          className={`rounded-full px-3 py-1 font-bold text-xs uppercase ${ref.isPositive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
+                          className={`rounded-full px-3 py-1 font-bold text-xs uppercase ${ref.isPositive ? "bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400" : "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400"}`}
                         >
                           {ref.isPositive ? "Positive" : "Negative"}
                         </div>
                       </div>
-                      <p className="text-gray-700 text-sm leading-relaxed">
+                      <p className="text-gray-700 text-sm leading-relaxed dark:text-gray-300">
                         {ref.text}
                       </p>
-                      <p className="mt-2 text-gray-400 text-xs">{ref.date}</p>
+                      <p className="mt-2 text-gray-400 text-xs dark:text-gray-500">
+                        {ref.date}
+                      </p>
 
                       {/* Response Display */}
                       {ref.response && (
-                        <div className="mt-4 flex gap-3 rounded-lg border border-gray-100 bg-gray-50 p-3">
+                        <div className="mt-4 flex gap-3 rounded-lg border border-gray-100 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800">
                           <div className="shrink-0 pt-1">
                             <Reply
-                              className="rotate-180 transform text-gray-400"
+                              className="rotate-180 transform text-gray-400 dark:text-gray-500"
                               size={16}
                             />
                           </div>
                           <div>
-                            <p className="mb-1 font-bold text-gray-600 text-xs">
+                            <p className="mb-1 font-bold text-gray-600 text-xs dark:text-gray-400">
                               Your Response • {ref.responseDate}
                             </p>
-                            <p className="text-gray-700 text-sm italic">
+                            <p className="text-gray-700 text-sm italic dark:text-gray-300">
                               "{ref.response}"
                             </p>
                           </div>
@@ -1158,7 +1221,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                       {/* Reply Button (Only for Me and if no response yet) */}
                       {isMe && !ref.response && replyingToRefId !== ref.id && (
                         <button
-                          className="mt-2 flex items-center gap-1 font-semibold text-blue-600 text-sm hover:underline"
+                          className="mt-2 flex items-center gap-1 font-semibold text-blue-600 text-sm hover:underline dark:text-blue-400"
                           onClick={() => setReplyingToRefId(ref.id)}
                         >
                           <MessageCircle size={14} /> Respond to Reference
@@ -1183,7 +1246,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                               Publish Response
                             </button>
                             <button
-                              className="rounded-lg px-4 py-1.5 font-bold text-gray-500 text-sm hover:bg-gray-100"
+                              className="rounded-lg px-4 py-1.5 font-bold text-gray-500 text-sm hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
                               onClick={() => {
                                 setReplyingToRefId(null);
                                 setReplyText("");
@@ -1206,38 +1269,38 @@ const ProfileView: React.FC<ProfileViewProps> = ({
       {/* Request Modal */}
       {showRequestModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="fade-in zoom-in-95 w-full max-w-sm animate-in rounded-xl bg-white p-6 shadow-xl duration-200">
-            <h3 className="mb-2 font-bold text-gray-900 text-xl">
+          <div className="fade-in zoom-in-95 w-full max-w-sm animate-in rounded-xl bg-white p-6 shadow-xl duration-200 dark:bg-gray-800">
+            <h3 className="mb-2 font-bold text-gray-900 text-xl dark:text-gray-100">
               Send Request to {profile.name}
             </h3>
-            <p className="mb-6 text-gray-600 text-sm">
+            <p className="mb-6 text-gray-600 text-sm dark:text-gray-400">
               Choose what kind of request you'd like to send.
             </p>
 
             <div className="space-y-3">
               <button
-                className="group flex w-full items-center justify-between rounded-lg border border-gray-200 p-4 transition-all hover:border-orange-500 hover:bg-orange-50"
+                className="group flex w-full items-center justify-between rounded-lg border border-gray-200 p-4 transition-all hover:border-orange-500 hover:bg-orange-50 dark:border-gray-700 dark:hover:bg-orange-500/20"
                 onClick={() => handleSendRequest("host")}
               >
                 <div className="flex items-center gap-3">
-                  <div className="rounded-full bg-green-100 p-2 text-green-600 transition-colors group-hover:bg-green-200">
+                  <div className="rounded-full bg-green-100 p-2 text-green-600 transition-colors group-hover:bg-green-200 dark:bg-green-500/20 dark:text-green-400 dark:group-hover:bg-green-500/30">
                     <Home size={20} />
                   </div>
-                  <span className="font-bold text-gray-800">
+                  <span className="font-bold text-gray-800 dark:text-gray-200">
                     Request to Stay
                   </span>
                 </div>
               </button>
 
               <button
-                className="group flex w-full items-center justify-between rounded-lg border border-gray-200 p-4 transition-all hover:border-orange-500 hover:bg-orange-50"
+                className="group flex w-full items-center justify-between rounded-lg border border-gray-200 p-4 transition-all hover:border-orange-500 hover:bg-orange-50 dark:border-gray-700 dark:hover:bg-orange-500/20"
                 onClick={() => handleSendRequest("meetup")}
               >
                 <div className="flex items-center gap-3">
-                  <div className="rounded-full bg-blue-100 p-2 text-blue-600 transition-colors group-hover:bg-blue-200">
+                  <div className="rounded-full bg-blue-100 p-2 text-blue-600 transition-colors group-hover:bg-blue-200 dark:bg-blue-500/20 dark:text-blue-400 dark:group-hover:bg-blue-500/30">
                     <UserIcon size={20} />
                   </div>
-                  <span className="font-bold text-gray-800">
+                  <span className="font-bold text-gray-800 dark:text-gray-200">
                     Request to Meet Up
                   </span>
                 </div>
@@ -1245,7 +1308,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
             </div>
 
             <button
-              className="mt-6 w-full py-2 font-bold text-gray-500 transition-colors hover:text-gray-800"
+              className="mt-6 w-full py-2 font-bold text-gray-500 transition-colors hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
               onClick={() => setShowRequestModal(false)}
             >
               Cancel
@@ -1257,13 +1320,13 @@ const ProfileView: React.FC<ProfileViewProps> = ({
       {/* Write Reference Modal */}
       {showWriteRefModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="fade-in zoom-in-95 w-full max-w-lg animate-in rounded-xl bg-white p-6 shadow-xl duration-200">
+          <div className="fade-in zoom-in-95 w-full max-w-lg animate-in rounded-xl bg-white p-6 shadow-xl duration-200 dark:bg-gray-800">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-bold text-gray-900 text-xl">
+              <h3 className="font-bold text-gray-900 text-xl dark:text-gray-100">
                 Write Reference for {profile.name}
               </h3>
               <button
-                className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-gray-700 dark:hover:text-gray-400"
                 onClick={() => {
                   setShowWriteRefModal(false);
                   setRefText("");
@@ -1277,7 +1340,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
 
             {/* Reference Type Selector */}
             <div className="mb-4">
-              <label className="mb-2 block font-semibold text-gray-700 text-sm">
+              <label className="mb-2 block font-semibold text-gray-700 text-sm dark:text-gray-300">
                 How do you know {profile.name}?
               </label>
               <div className="flex gap-2">
@@ -1285,8 +1348,8 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                   <button
                     className={`flex-1 rounded-lg border-2 px-4 py-2 font-semibold text-sm transition-all ${
                       refType === type
-                        ? "border-blue-500 bg-blue-50 text-blue-700"
-                        : "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50"
+                        ? "border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400"
+                        : "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:bg-gray-700"
                     }`}
                     key={type}
                     onClick={() => setRefType(type)}
@@ -1302,15 +1365,15 @@ const ProfileView: React.FC<ProfileViewProps> = ({
 
             {/* Positive/Negative Toggle */}
             <div className="mb-4">
-              <label className="mb-2 block font-semibold text-gray-700 text-sm">
+              <label className="mb-2 block font-semibold text-gray-700 text-sm dark:text-gray-300">
                 Was it a positive experience?
               </label>
               <div className="flex gap-3">
                 <button
                   className={`flex flex-1 items-center justify-center gap-2 rounded-lg border-2 px-4 py-3 font-semibold transition-all ${
                     refIsPositive
-                      ? "border-green-500 bg-green-50 text-green-700"
-                      : "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50"
+                      ? "border-green-500 bg-green-50 text-green-700 dark:bg-green-500/20 dark:text-green-400"
+                      : "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:bg-gray-700"
                   }`}
                   onClick={() => setRefIsPositive(true)}
                   type="button"
@@ -1320,8 +1383,8 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                 <button
                   className={`flex flex-1 items-center justify-center gap-2 rounded-lg border-2 px-4 py-3 font-semibold transition-all ${
                     refIsPositive
-                      ? "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50"
-                      : "border-red-500 bg-red-50 text-red-700"
+                      ? "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:bg-gray-700"
+                      : "border-red-500 bg-red-50 text-red-700 dark:bg-red-500/20 dark:text-red-400"
                   }`}
                   onClick={() => setRefIsPositive(false)}
                   type="button"
@@ -1333,17 +1396,17 @@ const ProfileView: React.FC<ProfileViewProps> = ({
 
             {/* Reference Text */}
             <div className="mb-6">
-              <label className="mb-2 block font-semibold text-gray-700 text-sm">
+              <label className="mb-2 block font-semibold text-gray-700 text-sm dark:text-gray-300">
                 Your Reference
               </label>
               <textarea
-                className="w-full resize-none rounded-lg border border-gray-300 p-3 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                className="w-full resize-none rounded-lg border border-gray-300 bg-white p-3 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
                 onChange={(e) => setRefText(e.target.value)}
                 placeholder={`Share your experience with ${profile.name}...`}
                 rows={5}
                 value={refText}
               />
-              <p className="mt-1 text-gray-500 text-xs">
+              <p className="mt-1 text-gray-500 text-xs dark:text-gray-400">
                 Be honest and constructive. Your reference helps others make
                 informed decisions.
               </p>
@@ -1352,7 +1415,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
             {/* Submit Button */}
             <div className="flex gap-3">
               <button
-                className="flex-1 rounded-lg px-4 py-2.5 font-bold text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
+                className="flex-1 rounded-lg px-4 py-2.5 font-bold text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
                 onClick={() => {
                   setShowWriteRefModal(false);
                   setRefText("");

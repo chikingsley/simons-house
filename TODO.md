@@ -116,11 +116,11 @@ Adapt these pages for the app:
 
 ### Performance & UX
 
-- [ ] Add TanStack Query for client-side caching (if not using Convex's built-in)
-- [ ] Implement lazy loading for images
-- [ ] Add pagination for user lists
-- [ ] Add loading states/skeletons (shadcn)
-- [ ] Add error boundaries
+- [x] Add TanStack Query for client-side caching (if not using Convex's built-in) - Will use Convex caching instead
+- [x] Implement lazy loading for images (native loading="lazy" on img tags)
+- [x] Add pagination for user lists (server + client with Load More)
+- [x] Add loading states/skeletons (shadcn skeleton component)
+- [x] Add error boundaries (react-error-boundary with AppErrorBoundary)
 
 ### AI Features (Gemini API)
 
@@ -131,9 +131,10 @@ Adapt these pages for the app:
 
 ### Testing
 
-- [ ] Set up Vitest
-- [ ] Add unit tests for utility functions
-- [ ] Add component tests
+- [x] Set up Vitest
+- [x] Add unit tests for utility functions (cn utility - 6 tests)
+- [x] Add component tests (Skeleton, StatusBadge - 7 tests)
+- [x] Add API tests (getUsers, createReference - 3 tests)
 - [ ] Add integration tests for key flows
 
 ---
@@ -142,9 +143,9 @@ Adapt these pages for the app:
 
 ### Polish
 
-- [ ] Dark mode
+- [x] Dark mode (full support across all components)
 - [ ] Responsive design improvements for mobile
-- [ ] Animations with Framer Motion
+- [x] Animations with Framer Motion (card stagger animations, motion components)
 - [ ] Internationalization (i18n)
 
 ### DevOps
