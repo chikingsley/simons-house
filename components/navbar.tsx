@@ -1,3 +1,5 @@
+import { SignedIn, UserButton } from "@clerk/clerk-react";
+import { useQuery } from "convex/react";
 import {
   LayoutDashboard,
   Mail,
@@ -5,40 +7,30 @@ import {
   User,
 } from "lucide-react";
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { api } from "../lib/api";
+import { convexApi } from "../lib/convex-api";
 import { useUser } from "../lib/user-context";
 import { ThemeToggle } from "./theme-toggle";
 
 const Navbar: React.FC = () => {
   const location = useLocation();
   const { currentUserId } = useUser();
-  const [unreadCount, setUnreadCount] = useState(0);
-
-  // Load unread message count
-  useEffect(() => {
-    const loadUnreadCount = async () => {
-      try {
-        const conversations = await api.getConversations(currentUserId);
-        // Count unread messages (messages from others that are not read)
-        const count = conversations.reduce((acc, conv) => {
-          const unread = conv.messages.filter(
-            (m) => m.senderId !== currentUserId && !m.isRead
-          ).length;
-          return acc + unread;
-        }, 0);
-        setUnreadCount(count);
-      } catch (error) {
-        console.error("Failed to load unread count:", error);
-      }
-    };
-    loadUnreadCount();
-
-    // Poll for updates every 30 seconds
-    const interval = setInterval(loadUnreadCount, 30_000);
-    return () => clearInterval(interval);
-  }, [currentUserId]);
+  const conversations = useQuery(
+    convexApi.conversations.getConversations,
+    {}
+  ) as { messages: { senderId: string; isRead: boolean }[] }[] | undefined;
+  const unreadCount = useMemo(() => {
+    if (!conversations) {
+      return 0;
+    }
+    return conversations.reduce((acc, conv) => {
+      const unread = conv.messages.filter(
+        (m) => m.senderId !== currentUserId && !m.isRead
+      ).length;
+      return acc + unread;
+    }, 0);
+  }, [conversations, currentUserId]);
 
   const navItemClass = (path: string | string[]) => {
     const paths = Array.isArray(path) ? path : [path];
@@ -60,7 +52,7 @@ const Navbar: React.FC = () => {
           <Link to="/">
             {/* Logo Imitation */}
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-500 p-1.5 font-bold font-serif text-white text-xl italic shadow-sm transition-colors hover:bg-orange-600">
-              Cs
+              SH
             </div>
           </Link>
         </div>
@@ -96,6 +88,12 @@ const Navbar: React.FC = () => {
           <div className="ml-2 border-gray-200 border-l pl-4 dark:border-gray-700">
             <ThemeToggle />
           </div>
+
+          <SignedIn>
+            <div className="ml-2 border-gray-200 border-l pl-4 dark:border-gray-700">
+              <UserButton />
+            </div>
+          </SignedIn>
         </div>
       </div>
     </nav>

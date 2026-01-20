@@ -1,6 +1,6 @@
 Title: Team | Couchsurfing
 
-URL Source: https://www.couchsurfing.com/about/team/
+URL Source: [couchsurfing.com/about](https://www.couchsurfing.com/about/team/)
 
 Published Time: Mon, 22 Jul 2024 19:16:23 GMT
 
@@ -73,7 +73,7 @@ Connect with us:
 
 * * *
 
-*       *   ##### About
+* *   ##### About
 
   * [About Us](https://www.couchsurfing.com/about/about-us)
   * [Team](https://www.couchsurfing.com/about/team)
@@ -81,26 +81,26 @@ Connect with us:
   * [Press](https://www.couchsurfing.com/about/press)
   * [Blog](http://blog.couchsurfing.com/)
 
-*       *   ##### Getting Started
+* *   ##### Getting Started
 
   * [How It Works](https://www.couchsurfing.com/about/how-it-works)
   * [Resource Center](https://www.couchsurfing.com/about/resource-center)
   * [Mobile](https://www.couchsurfing.com/about/mobile)
 
-*       *   ##### Safety
+* *   ##### Safety
 
   * [Basics](https://www.couchsurfing.com/about/safety)
   * [Tips](https://www.couchsurfing.com/about/tips)
   * [FAQ](https://www.couchsurfing.com/about/faq)
 
-*       *   ##### Community
+* *   ##### Community
 
   * [Our Values](https://www.couchsurfing.com/about/values)
   * [Ambassador Program](https://www.couchsurfing.com/about/ambassadors)
   * [Stories](http://blog.couchsurfing.com/)
   * [Special Thanks](https://www.couchsurfing.com/about/thanks)
 
-*       *   ##### Support
+* *   ##### Support
 
   * [Policies](https://www.couchsurfing.com/about/policies)
   * [Help](https://support.couchsurfing.com/)

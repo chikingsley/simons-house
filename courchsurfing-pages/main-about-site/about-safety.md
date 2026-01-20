@@ -1,13 +1,13 @@
 Title: Safety Basics | Couchsurfing
 
-URL Source: https://www.couchsurfing.com/about/safety/
+URL Source: [couchsurfing.com/about](https://www.couchsurfing.com/about/safety/)
 
 Published Time: Mon, 22 Jul 2024 19:16:23 GMT
 
 Markdown Content:
 [Contact Our Safety Team](https://support.couchsurfing.com/hc/en-us/requests/new?category=safety "Contact Our Safety Team")
 
-**Your safety is important. Take it seriously. We do.**
+* *Your safety is important. Take it seriously. We do.**
 
 #### **Review Profiles and References Carefully**
 

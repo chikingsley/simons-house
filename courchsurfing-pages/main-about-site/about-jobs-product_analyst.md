@@ -1,15 +1,15 @@
 Title: Work at Couchsurfing
 
-URL Source: https://www.couchsurfing.com/about/jobs/product_analyst.html
+URL Source: [couchsurfing.com/about](https://www.couchsurfing.com/about/jobs/product_analyst.html)
 
 Markdown Content:
 Product and Operations Analyst
-------------------------------
+- -----------------------------
 
 Couchsurfing, an international travel startup headquartered in San Francisco, is looking for an experienced Analyst to manage our team’s product and operational analytics.
 
 About the Role
---------------
+- -------------
 
 As the Product and Operations Analyst you’ll be the champion of Data within Couchsurfing. You’ll investigate and report on product and business metrics, and guide us on how to improve them. We’re looking for someone who loves data and can help inform leadership decision making through quantitative analysis and financial modeling.
 
@@ -18,7 +18,7 @@ You will interact daily with heads of Product and Business Operations, and weekl
 If you are an experienced Product Analyst, Product Manager, or Operations Manager, we would love to speak with you!
 
 Responsibilities:
------------------
+- ----------------
 
 * Improving upon and regularly reporting KPIs
   * Business health
@@ -41,7 +41,7 @@ Responsibilities:
   * Reconcile data across sources
 
 Requirements:
--------------
+- ------------
 
 * 2 - 4 years relevant work experience
 * Superb quantitative and qualitative analytical ability
@@ -51,7 +51,7 @@ Requirements:
 * Experience with our product analytics toolset is a plus: Google Analytics, Redshift, Looker, and Amplitude.
 
 Culture and perks
------------------
+- ----------------
 
 * Awesome co-workers who care about building a great service and each other
 * We work hard and play hard - you have freedom to get the job done, but must deliver results.
@@ -64,7 +64,7 @@ Culture and perks
 This position is located at Couchsurfing HQ in San Francisco, California.
 
 About Couchsurfing
-------------------
+- -----------------
 
 Couchsurfing is the world’s premier social travel platform, with over 12 million members in nearly every country in the world. Couchsurfing changes people’s lives. Hearing the stories of Couchsurfers whose lives have been transformed by travel is the greatest reward for doing what we do. Join us and every day thousands of people from every country in the world will meet in person and embark on new adventures as a direct result of your work.
 

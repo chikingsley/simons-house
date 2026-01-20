@@ -1,6 +1,6 @@
 Title: Our Values | Couchsurfing
 
-URL Source: https://www.couchsurfing.com/about/values/
+URL Source: [couchsurfing.com/about](https://www.couchsurfing.com/about/values/)
 
 Markdown Content:
 Our Values | Couchsurfing
@@ -48,35 +48,35 @@ Our Values | Couchsurfing
 ![Image 8: Happy coffee mugs and cookies](https://www.couchsurfing.com/about/images/coffee_mugs.png)
 
 1. Share Your Life
----------------
+- --------------
 
 Couchsurfing is about sharing your life, your experiences, your journey, your home, your extra almonds or a majestic sunset. We believe that the spirit of generosity, when applied liberally, has the power to profoundly change the world.
 
 ![Image 9: Bridge](https://www.couchsurfing.com/about/images/bridge.png)
 
 1. Create Connection
----------------
+- --------------
 
 Connection makes us happier; we need more of it. Connecting with and accepting the kindness of "strangers" strengthens our faith in each other and helps us all become better people.
 
 ![Image 10: Flower](https://www.couchsurfing.com/about/images/flower.png)
 
 1. Offer Kindness
----------------
+- --------------
 
 Tolerance, respect and appreciation for differences are embodied in kindness.
 
 ![Image 11: Sign](https://www.couchsurfing.com/about/images/sign.png)
 
 1. Stay Curious
----------------
+- --------------
 
 We appreciate and share a desire to learn about one another, about the world and about how we can grow as people and become better global citizens through travel.
 
 ![Image 12: Plant](https://www.couchsurfing.com/about/images/plant_shovel.png)
 
 1. Leave It Better Than You Found It
----------------
+- --------------
 
 This applies to the world, to relationships, to your host's home or to the sidewalk you meander down on your way to the coffee shop. We're here to make the world better, to enhance each other's lives and to become stronger in that purpose by coming together.
 
@@ -91,9 +91,9 @@ Connect with us:
 * [](https://www.youtube.com/channel/UCv_Xm-DTDp2rPMxI5Xq7_LQ "You Tube")
 * [](http://instagram.com/couchsurfing "Instagram")
 
----------------
+- --------------
 
-*       *   ##### About
+* *   ##### About
 
   * [About Us](https://www.couchsurfing.com/about/about-us)
   * [Team](https://www.couchsurfing.com/about/team)
@@ -101,26 +101,26 @@ Connect with us:
   * [Press](https://www.couchsurfing.com/about/press)
   * [Blog](http://blog.couchsurfing.com/)
 
-*       *   ##### Getting Started
+* *   ##### Getting Started
 
   * [How It Works](https://www.couchsurfing.com/about/how-it-works)
   * [Resource Center](https://www.couchsurfing.com/about/resource-center)
   * [Mobile](https://www.couchsurfing.com/about/mobile)
 
-*       *   ##### Safety
+* *   ##### Safety
 
   * [Basics](https://www.couchsurfing.com/about/safety)
   * [Tips](https://www.couchsurfing.com/about/tips)
   * [FAQ](https://www.couchsurfing.com/about/faq)
 
-*       *   ##### Community
+* *   ##### Community
 
   * [Our Values](https://www.couchsurfing.com/about/values)
   * [Ambassador Program](https://www.couchsurfing.com/about/ambassadors)
   * [Stories](http://blog.couchsurfing.com/)
   * [Special Thanks](https://www.couchsurfing.com/about/thanks)
 
-*       *   ##### Support
+* *   ##### Support
 
   * [Policies](https://www.couchsurfing.com/about/policies)
   * [Help](https://support.couchsurfing.com/)

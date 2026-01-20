@@ -49,7 +49,7 @@
 - [x] Add authorId to references for proper linking
 - [x] Fix photo uploads to use local file selection instead of URL prompts
 
----
+- --
 
 ## CRITICAL - Stack Migration
 
@@ -81,7 +81,7 @@ Files with hardcoded data that need real data:
 - [x] `constants.ts` - Removed unused mock data (CURRENT_USER, MOCK_USERS, MOCK_INBOX)
 - [x] `components/navbar.tsx` - Now shows dynamic unread count from API
 
----
+- --
 
 ## High Priority
 
@@ -110,7 +110,7 @@ Adapt these pages for the app:
 - [ ] FAQ (`about-faq.md`) - User questions
 - [ ] Safety Tips (`about-tips.md`) - Safety guidelines
 
----
+- --
 
 ## Medium Priority
 
@@ -137,7 +137,7 @@ Adapt these pages for the app:
 - [x] Add API tests (getUsers, createReference - 3 tests)
 - [ ] Add integration tests for key flows
 
----
+- --
 
 ## Low Priority
 
@@ -156,7 +156,7 @@ Adapt these pages for the app:
 - [ ] Set up CI/CD pipeline
 - [ ] Add environment variable validation
 
----
+- --
 
 ## Tech Stack Decision
 

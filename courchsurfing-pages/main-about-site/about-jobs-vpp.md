@@ -1,10 +1,10 @@
 Title: Work at Couchsurfing
 
-URL Source: https://www.couchsurfing.com/about/jobs/vpp.html
+URL Source: [couchsurfing.com/about](https://www.couchsurfing.com/about/jobs/vpp.html)
 
 Markdown Content:
 VP of Product
--------------
+- ------------
 
 Couchsurfing is the world’s premier social travel platform, with over 12 million members in nearly every country in the world. Couchsurfing changes people’s lives. Hearing the stories of Couchsurfers whose lives have been transformed by travel is the greatest reward for doing what we do. Join us and every day thousands of people from every country in the world will meet in person and embark on new adventures as a direct result of your work.
 
@@ -15,7 +15,7 @@ As VP of Product, you’ll play an integral role in building out Couchsurfing’
 You’ll be an early member of a product team building a game changing product. You’ll have ownership over a large piece of the product and drive strategy, roadmap, user research, release, metrics, and iteration. We’re a small, nimble, and fast moving team so you’ll have your hands in a bit of everything.
 
 Responsibilities
-----------------
+- ---------------
 
 * Work with our design team to build beautiful, effective products
 * Drive product development with engineering to ship your ideas
@@ -24,7 +24,7 @@ Responsibilities
 * Manage user research to learn about our candidate and employer users
 
 Requirements
-------------
+- -----------
 
 * 4+ years of prior experience in product management and/or product design
 * Great written & communication skills
@@ -33,7 +33,7 @@ Requirements
 * Background in a technical field is ideal
 
 Compensation & Benefits
------------------------
+- ----------------------
 
 * Competitive compensation & equity options
 * Open vacation & sick time

@@ -93,9 +93,11 @@ export type Conversation = {
   otherUser: User;
   lastMessage: string;
   lastMessageDate: string;
+  lastMessageAt?: string; // ISO timestamp for sorting / relative UI
   status: "active" | "archived";
   requestType?: "host" | "meetup";
   isRequest?: boolean;
+  requestStatus?: "pending" | "accepted" | "declined";
   isBlocked?: boolean;
   isIncoming?: boolean; // True if this is a received request/message
   labels?: string[];

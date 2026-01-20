@@ -1,6 +1,6 @@
 Title: Work at Couchsurfing
 
-URL Source: https://www.couchsurfing.com/about/jobs/support.html
+URL Source: [couchsurfing.com/about](https://www.couchsurfing.com/about/jobs/support.html)
 
 Markdown Content:
 Couchsurfing is hiring a Community Support Associate. In this role, you’ll be the voice of Couchsurfing, supporting members who have questions or are reporting issues on the site. Your calm, super-friendly and professional demeanor in written communication will be one of your greatest assets. Requests will range from “how-tos” to complicated technical issues to questions about personal safety, and your analytical and comprehension abilities will help you decipher what is happening and how to best reach a resolution.

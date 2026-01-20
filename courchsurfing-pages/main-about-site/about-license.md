@@ -1,6 +1,6 @@
 Title: License Agreement | Couchsurfing
 
-URL Source: https://www.couchsurfing.com/about/license/
+URL Source: [couchsurfing.com/about](https://www.couchsurfing.com/about/license/)
 
 Markdown Content:
 This License Agreement is designed to protect the logos and all trademarks, trade names, service marks or designs belonging to Couchsurfing International, Inc. (Couchsurfing) (collectively the Marks) from being used in ways that are confusing, misleading or otherwise not correctly representative of our community. Please be sure to follow this set of guidelines when using our Marks.
@@ -13,11 +13,11 @@ The Marks may be used by you in accordance with the terms and conditions set for
 
 3. This license permits use of the Marks exclusively for the following purposes (hereinafter, Approved Use):
 
-**Academic Use:** You may use the Marks in conjunction with your role as a student or faculty member at an accredited university, college or secondary school, such as for publication in academic journals, research projects or academic presentations. Such use shall be limited to non-commercial academic purposes.
+* *Academic Use:** You may use the Marks in conjunction with your role as a student or faculty member at an accredited university, college or secondary school, such as for publication in academic journals, research projects or academic presentations. Such use shall be limited to non-commercial academic purposes.
 
-**Couchsurfing Apparel & Materials:** Subject to Couchsurfings prior written approval, you may use the Marks to design and manufacture your own t-shirts, banners, sweatshirts, hats or other related goods for the sole purpose of promoting Couchsurfing. You may distribute your apparel and materials to other Couchsurfing registered members free-of-charge, however you may not incorporate the Marks into anything produced commercially, regardless of whether or not you intend to make a profit.
+* *Couchsurfing Apparel & Materials:** Subject to Couchsurfings prior written approval, you may use the Marks to design and manufacture your own t-shirts, banners, sweatshirts, hats or other related goods for the sole purpose of promoting Couchsurfing. You may distribute your apparel and materials to other Couchsurfing registered members free-of-charge, however you may not incorporate the Marks into anything produced commercially, regardless of whether or not you intend to make a profit.
 
-**Social Media:** Subject to Couchsurfings prior written approval, you may use the Marks in conjunction with the creation and operation of social media profiles for your local Couchsurfing community. For the purposes of this section, social media websites shall include any third party website which allows users to interact and communicate with each other online but does not include any standalone websites created by you or on your behalf. Use of the Marks under this section is conditioned upon your acceptance of and compliance with any social media use policies provided to you by Couchsurfing.
+* *Social Media:** Subject to Couchsurfings prior written approval, you may use the Marks in conjunction with the creation and operation of social media profiles for your local Couchsurfing community. For the purposes of this section, social media websites shall include any third party website which allows users to interact and communicate with each other online but does not include any standalone websites created by you or on your behalf. Use of the Marks under this section is conditioned upon your acceptance of and compliance with any social media use policies provided to you by Couchsurfing.
 
 1. Any Approved Use which incorporates the Marks must be made to a high quality standard, and you may not incorporate the Marks into any product or website which: is defamatory; contains nudity or sexually explicit content; disparages any ethnic, racial, sexual or religious group by stereotypical depiction or otherwise; violates any applicable local, state, national or international law or regulation; exploits images or the likeness of individuals under 18 years of age; depicts use of illicit drugs; makes use of offensive language or images; characterizes violence as acceptable, glamorous or desirable; contains any third-party trademarks, identifications or copyrights (or other intellectual property) or allow the Marks to be connected with any other commercial enterprise.
 

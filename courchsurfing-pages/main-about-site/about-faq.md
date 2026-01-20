@@ -1,15 +1,15 @@
 Title: Frequently Asked Questions | Couchsurfing
 
-URL Source: https://www.couchsurfing.com/about/faq/
+URL Source: [couchsurfing.com/about](https://www.couchsurfing.com/about/faq/)
 
 Markdown Content:
 [Contact Our Safety Team](https://support.couchsurfing.com/hc/en-us/requests/new?category=safety "Contact Our Safety Team")
 
 Safety FAQ
-----------
+- ---------
 
 General
--------
+- ------
 
 * [Is Couchsurfing safe?](https://www.couchsurfing.com/about/faq/#is_it_safe)
 * [How can I change my privacy settings?](https://www.couchsurfing.com/about/faq/#privacy_settings)
@@ -18,28 +18,28 @@ General
 * [Some of my other online accounts have been hacked. How can I protect my Couchsurfing profile?](https://www.couchsurfing.com/about/faq/#other_hacked)
 
 Reporting an Issue
-------------------
+- -----------------
 
 * [How do I report a problem?](https://www.couchsurfing.com/about/faq/#problem)
 * [If I write to Couchsurfing about a problem with another member, will my report be confidential?](https://www.couchsurfing.com/about/faq/#confidentiality)
 * [What happens when I use the Report Abuse button?](https://www.couchsurfing.com/about/faq/#report_abuse_button)
 
 Member-to-Member Issues
-------------------------
+- -----------------------
 
 * [I met a Couchsurfer and the experience was negative, what should I do?](https://www.couchsurfing.com/about/faq/#negative_experience)
 * [I heard of someone charging for their couch. Is that okay?](https://www.couchsurfing.com/about/faq/#charging_for_a_couch)
 * [I met or interacted with a Couchsurfer who I think should not be part of our community. Will you remove the profile?](https://www.couchsurfing.com/about/faq/#removing_profiles)
 
 Emergencies
------------
+- ----------
 
 * [I am in a situation with another Couchsurfer where my immediate safety, or the safety of my possessions, is in danger.](https://www.couchsurfing.com/about/faq/#situation_dangerous)
 * [My family member is missing. They are traveling using Couchsurfing. Can you help?](https://www.couchsurfing.com/about/faq/#someone_missing)
 * [I am expecting a Couchsurfer, but they haven’t arrived, contacted me or logged in.](https://www.couchsurfing.com/about/faq/#missing_surfer)
 
 References
-----------
+- ---------
 
 * [What are references?](https://www.couchsurfing.com/about/faq/#references)
 * [Why can someone leave me a reference without having met me?](https://www.couchsurfing.com/about/faq/#unacquainted_references)
@@ -47,7 +47,7 @@ References
 * [Can you remove a reference from my profile?](https://www.couchsurfing.com/about/faq/#remove_reference)
 
 Messages
---------
+- -------
 
 * [Do I need to reply to every message?](https://www.couchsurfing.com/about/faq/#reply_messages)
 * [I received what I think is a spam message.](https://www.couchsurfing.com/about/faq/#spam)
@@ -55,7 +55,7 @@ Messages
 * [I’m having a dispute with another member. Can you verify this by checking my messages?](https://www.couchsurfing.com/about/faq/#member_disputes)
 
 Hangouts and Events
--------------------
+- ------------------
 
 * [What are Hangouts?](https://www.couchsurfing.com/about/faq/#hangouts)
 * [What are Events?](https://www.couchsurfing.com/about/faq/#events)
@@ -63,7 +63,7 @@ Hangouts and Events
 * [How do I know that an event or Hangout is safe to attend?](https://www.couchsurfing.com/about/faq/#hangout_safety)
 
 General Questions
------------------
+- ----------------
 
 [Top](https://www.couchsurfing.com/about/faq/#top "Top")
 
@@ -100,7 +100,7 @@ If your other online accounts have been hacked, please change your Couchsurfing 
 If the email address that you used to create your Couchsurfing profile has been hacked, you should also change the email that is associated with your account. If a hacker has access to your Couchsurfing-related email, they can use it to reset your password and gain access to your account.
 
 Reporting an Issue (Details)
------------------------------
+- ----------------------------
 
 [Top](https://www.couchsurfing.com/about/faq/#top "Top")
 
@@ -123,7 +123,7 @@ What happens when I use the Report Abuse button?
 Report Abuse should only be used to report abuse of the website or content-related abuse issues (such as profiles you believe to be fake, profiles sending dating spam, etc.). Any safety threat or incident should be reported directly to our Trust and Safety Team. When you use the Report abuse button to report a profile, event, group post, message, etc., this information will be entered into our internal system. If we confirm that the reported content is in fact abusive, we may remove the content or warn the member who created it. Only members of the Trust and Safety team will be able to see your report. All reports are confidential and will not be discussed with anyone outside of the team, unless we need to work with law enforcement or obtain legal advice.
 
 Member-to-Member Issues (Details)
----------------------------------
+- --------------------------------
 
 [Top](https://www.couchsurfing.com/about/faq/#top "Top")
 
@@ -157,7 +157,7 @@ Couchsurfing is an all-inclusive community, and in the spirit of being a diverse
 We will remove a profile if the member breaks our [Terms of Use](https://about.couchsurfing.com/about/terms-of-use) or if we receive information indicating that the person is a scammer or otherwise a danger to the community.
 
 Emergencies (Details)
----------------------
+- --------------------
 
 [Top](https://www.couchsurfing.com/about/faq/#top "Top")
 
@@ -182,7 +182,7 @@ I am expecting a Couchsurfer, but they haven’t arrived, contacted me or logged
 Contact us with a link to their profile. Don’t panic. Sometimes travelers are delayed and aren’t able to access the Internet. If it’s been longer than 24 hours, we can check to see if they have been in contact with anyone else on the site, but we can only share that information with law enforcement.
 
 References (Details)
----------------------
+- --------------------
 
 [Top](https://www.couchsurfing.com/about/faq/#top "Top")
 
@@ -217,7 +217,7 @@ We will, however, flag a reference if it is outside of our guidelines. A flagged
 If you are concerned about a negative or neutral reference on your profile that does not break our guidelines, please remember that anyone who reads it will also be able to read your response. In your reference for that person, clearly and calmly explain your side of the story. People who visit your profile will be able to read both references and decide for themselves what they think.
 
 Messages (Details)
-------------------
+- -----------------
 
 [Top](https://www.couchsurfing.com/about/faq/#top "Top")
 
@@ -246,7 +246,7 @@ If you receive a message that is outside of our [Terms of Use](https://about.cou
 In the case of disputes between members, we generally will not read messages. On very rare occasions we may check messages upon request, if we believe that doing so can prevent a crime or otherwise protect the safety of the community.
 
 Hangouts and Events (Details)
--------------------------------
+- ------------------------------
 
 [Top](https://www.couchsurfing.com/about/faq/#top "Top")
 
@@ -258,7 +258,7 @@ Hangouts, available in the Couchsurfing mobile apps, allow you to see nearby Cou
 
 What are Events?
 
-Couchsurfing has thousands of events hosted by Couchsurfers all over the world. To find an event near you, go to [https://www.couchsurfing.com/events](https://www.couchsurfing.com/events).
+Couchsurfing has thousands of events hosted by Couchsurfers all over the world. To find an event near you, go to [[couchsurfing.com/events](https://www.couchsurfing.com/events)](https://www.couchsurfing.com/events).
 
 [Top](https://www.couchsurfing.com/about/faq/#top "Top")
 

@@ -1,3 +1,10 @@
+import {
+  RedirectToSignIn,
+  SignedIn,
+  SignedOut,
+  SignIn,
+  SignUp,
+} from "@clerk/clerk-react";
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -17,7 +24,6 @@ import Navbar from "./components/navbar";
 import ProfileView from "./components/profile-view";
 import SettingsView from "./components/settings-view";
 import { ThemeProvider } from "./components/theme-provider";
-import { UserSwitcher } from "./components/user-switcher";
 import { api } from "./lib/api";
 import { UserProvider, useUser } from "./lib/user-context";
 import type { Conversation, User } from "./types";
@@ -29,11 +35,6 @@ function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background font-sans text-foreground">
-      {/* User Switcher - Testing Mode */}
-      <div className="fixed top-20 right-4 z-50">
-        <UserSwitcher />
-      </div>
-
       <Navbar />
 
       {/* Main content */}
@@ -52,8 +53,7 @@ function Layout({ children }: { children: React.ReactNode }) {
               </button>
             </div>
             <div className="mt-8 text-muted-foreground text-xs">
-              © 1999 - {new Date().getFullYear()} Couchsurfing International,
-              Inc.
+              © {new Date().getFullYear()} Simon&apos;s House
             </div>
           </div>
         </footer>
@@ -167,10 +167,25 @@ const App: React.FC = () => (
   <AppErrorBoundary>
     <ThemeProvider>
       <BrowserRouter>
-        <UserProvider>
-          <AppRoutes />
-          <Toaster position="top-right" richColors />
-        </UserProvider>
+        <SignedIn>
+          <UserProvider>
+            <AppRoutes />
+            <Toaster position="top-right" richColors />
+          </UserProvider>
+        </SignedIn>
+        <SignedOut>
+          <Routes>
+            <Route
+              element={<SignIn path="/sign-in" routing="path" />}
+              path="/sign-in/*"
+            />
+            <Route
+              element={<SignUp path="/sign-up" routing="path" />}
+              path="/sign-up/*"
+            />
+            <Route element={<RedirectToSignIn />} path="*" />
+          </Routes>
+        </SignedOut>
       </BrowserRouter>
     </ThemeProvider>
   </AppErrorBoundary>

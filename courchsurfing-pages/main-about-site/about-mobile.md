@@ -1,6 +1,6 @@
 Title: Mobile | Couchsurfing
 
-URL Source: https://www.couchsurfing.com/about/mobile/
+URL Source: [couchsurfing.com/about](https://www.couchsurfing.com/about/mobile/)
 
 Markdown Content:
 Mobile | Couchsurfing
@@ -53,21 +53,21 @@ Get the iPhone and Android app today.
 ![Image 11](https://www.couchsurfing.com/about/images/mobile-host.jpg)
 
 Find your next host
--------------------
+- ------------------
 
 Search by location and narrow down the results using filters like age range, gender, friends of friends and more.
 
 ![Image 12](https://www.couchsurfing.com/about/images/mobile-profiles.jpg)
 
 View profiles and references
-----------------------------
+- ---------------------------
 
 The profile display is designed so you can easily browse personal descriptions, references, photos and friends.
 
 ![Image 13](https://www.couchsurfing.com/about/images/mobile-conversations.jpg)
 
 Have conversations
-------------------
+- -----------------
 
 Get immediate access to new Couchrequests and discussions on your existing requests.
 
@@ -86,7 +86,7 @@ Connect with us:
 
 * * *
 
-*       *   ##### About
+* *   ##### About
 
   * [About Us](https://www.couchsurfing.com/about/about-us)
   * [Team](https://www.couchsurfing.com/about/team)
@@ -94,26 +94,26 @@ Connect with us:
   * [Press](https://www.couchsurfing.com/about/press)
   * [Blog](http://blog.couchsurfing.com/)
 
-*       *   ##### Getting Started
+* *   ##### Getting Started
 
   * [How It Works](https://www.couchsurfing.com/about/how-it-works)
   * [Resource Center](https://www.couchsurfing.com/about/resource-center)
   * [Mobile](https://www.couchsurfing.com/about/mobile)
 
-*       *   ##### Safety
+* *   ##### Safety
 
   * [Basics](https://www.couchsurfing.com/about/safety)
   * [Tips](https://www.couchsurfing.com/about/tips)
   * [FAQ](https://www.couchsurfing.com/about/faq)
 
-*       *   ##### Community
+* *   ##### Community
 
   * [Our Values](https://www.couchsurfing.com/about/values)
   * [Ambassador Program](https://www.couchsurfing.com/about/ambassadors)
   * [Stories](http://blog.couchsurfing.com/)
   * [Special Thanks](https://www.couchsurfing.com/about/thanks)
 
-*       *   ##### Support
+* *   ##### Support
 
   * [Policies](https://www.couchsurfing.com/about/policies)
   * [Help](https://support.couchsurfing.com/)

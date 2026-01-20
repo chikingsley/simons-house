@@ -1,6 +1,6 @@
 Title: Work at Couchsurfing
 
-URL Source: https://www.couchsurfing.com/about/jobs/
+URL Source: [couchsurfing.com/about](https://www.couchsurfing.com/about/jobs/)
 
 Markdown Content:
 Work at Couchsurfing
@@ -49,7 +49,7 @@ Work at Couchsurfing
 Job Openings
 ============
 
-**[Please explore our current job openings here.](https://couchsurfing.recruiterbox.com/)**
+* *[Please explore our current job openings here.](https://couchsurfing.recruiterbox.com/)**
 
 Couchsurfing changes peoples’ lives. Hearing the stories of Couchsurfers whose lives have been transformed by travel is the greatest reward for doing what we do. Join us and every day thousands of people from every country in the world will meet in person as a direct result of your work.
 
@@ -79,7 +79,7 @@ Connect with us:
 
 * * *
 
-*       *   ##### About
+* *   ##### About
 
   * [About Us](https://www.couchsurfing.com/about/about-us)
   * [Team](https://www.couchsurfing.com/about/team)
@@ -87,26 +87,26 @@ Connect with us:
   * [Press](https://www.couchsurfing.com/about/press)
   * [Blog](http://blog.couchsurfing.com/)
 
-*       *   ##### Getting Started
+* *   ##### Getting Started
 
   * [How It Works](https://www.couchsurfing.com/about/how-it-works)
   * [Resource Center](https://www.couchsurfing.com/about/resource-center)
   * [Mobile](https://www.couchsurfing.com/about/mobile)
 
-*       *   ##### Safety
+* *   ##### Safety
 
   * [Basics](https://www.couchsurfing.com/about/safety)
   * [Tips](https://www.couchsurfing.com/about/tips)
   * [FAQ](https://www.couchsurfing.com/about/faq)
 
-*       *   ##### Community
+* *   ##### Community
 
   * [Our Values](https://www.couchsurfing.com/about/values)
   * [Ambassador Program](https://www.couchsurfing.com/about/ambassadors)
   * [Stories](http://blog.couchsurfing.com/)
   * [Special Thanks](https://www.couchsurfing.com/about/thanks)
 
-*       *   ##### Support
+* *   ##### Support
 
   * [Policies](https://www.couchsurfing.com/about/policies)
   * [Help](https://support.couchsurfing.com/)

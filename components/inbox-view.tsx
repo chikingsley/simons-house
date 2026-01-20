@@ -16,12 +16,11 @@ import {
   X,
 } from "lucide-react";
 import type React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { getRandomResponse } from "../constants";
 import { api } from "../lib/api";
 import { useUser } from "../lib/user-context";
-import type { Conversation, Label, Message } from "../types";
+import type { Conversation, Label } from "../types";
 import { QuickInfoList, UserIdentityCard } from "./ui/user-identity-card";
 import { VerificationList } from "./ui/verification-list";
 
@@ -55,10 +54,71 @@ const InboxView: React.FC<InboxProps> = ({
 
   const selectedConversation = conversations.find((c) => c.id === selectedId);
 
+  const formatRelativeTime = useCallback((iso?: string): string => {
+    if (!iso) {
+      return "";
+    }
+    const ms = Date.now() - Date.parse(iso);
+    if (!Number.isFinite(ms)) {
+      return "";
+    }
+    if (ms < 60_000) {
+      return "Just now";
+    }
+    const mins = Math.floor(ms / 60_000);
+    if (mins < 60) {
+      return `${mins}m`;
+    }
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) {
+      return `${hours}h`;
+    }
+    const days = Math.floor(hours / 24);
+    return `${days}d`;
+  }, []);
+
+  const displayLastMessageDate = useCallback(
+    (conv: Conversation): string => {
+      const rel = formatRelativeTime(conv.lastMessageAt);
+      return rel || conv.lastMessageDate;
+    },
+    [formatRelativeTime]
+  );
+
+  const selectConversation = useCallback(
+    async (conversationId: string) => {
+      setSelectedId(conversationId);
+      const conv = conversations.find((c) => c.id === conversationId);
+      setPrivateNote(conv?.notes ?? "");
+
+      // Optimistically mark unread incoming messages as read in UI.
+      setConversations((prev) =>
+        prev.map((c) => {
+          if (c.id !== conversationId) {
+            return c;
+          }
+          return {
+            ...c,
+            messages: c.messages.map((m) =>
+              m.senderId !== currentUserId ? { ...m, isRead: true } : m
+            ),
+          };
+        })
+      );
+
+      try {
+        await api.markConversationRead({ conversationId });
+      } catch (error) {
+        console.error("Failed to mark conversation read:", error);
+      }
+    },
+    [conversations, currentUserId, setConversations]
+  );
+
   // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, []);
+  }, [selectedId, selectedConversation?.messages.length]);
 
   // Load available labels
   useEffect(() => {
@@ -98,54 +158,6 @@ const InboxView: React.FC<InboxProps> = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showMenu, showLabelsDropdown]);
-
-  // AI Response Simulation
-  useEffect(() => {
-    if (
-      !selectedConversation ||
-      selectedConversation.status === "archived" ||
-      selectedConversation.isBlocked
-    ) {
-      return;
-    }
-
-    const lastMsg = selectedConversation.messages.at(-1);
-    if (lastMsg && lastMsg.senderId === currentUserId) {
-      const timeout = setTimeout(() => {
-        const newMsg: Message = {
-          id: `ai-${Date.now()}`,
-          senderId: selectedConversation.otherUser.id,
-          text: getRandomResponse(),
-          timestamp: new Date().toISOString(),
-          isRead: false,
-        };
-
-        setConversations((prev) =>
-          prev.map((c) => {
-            if (c.id === selectedConversation.id) {
-              return {
-                ...c,
-                messages: [...c.messages, newMsg],
-                lastMessage: newMsg.text,
-                lastMessageDate: "Just now",
-              };
-            }
-            return c;
-          })
-        );
-      }, 1500); // 1.5s delay
-      return () => clearTimeout(timeout);
-    }
-  }, [
-    selectedConversation?.messages,
-    selectedConversation?.id,
-    selectedConversation?.isBlocked,
-    selectedConversation?.otherUser?.id,
-    selectedConversation?.status,
-    currentUserId,
-    setConversations,
-    selectedConversation,
-  ]);
 
   const handleSendMessage = async () => {
     if (!(inputValue.trim() && selectedId) || selectedConversation?.isBlocked) {
@@ -193,6 +205,24 @@ const InboxView: React.FC<InboxProps> = ({
     setPrivateNote(e.target.value);
   };
 
+  const persistPrivateNote = useCallback(async () => {
+    if (!selectedId) {
+      return;
+    }
+    // Optimistic local state already in `privateNote`; persist to Convex.
+    setConversations((prev) =>
+      prev.map((c) => (c.id === selectedId ? { ...c, notes: privateNote } : c))
+    );
+    try {
+      await api.setConversationNotes({
+        conversationId: selectedId,
+        notes: privateNote,
+      });
+    } catch (error) {
+      console.error("Failed to save private note:", error);
+    }
+  }, [privateNote, selectedId, setConversations]);
+
   const toggleArchive = (e?: React.MouseEvent) => {
     e?.stopPropagation();
     if (!selectedId) {
@@ -205,6 +235,12 @@ const InboxView: React.FC<InboxProps> = ({
     setConversations((prev) =>
       prev.map((c) => (c.id === selectedId ? { ...c, status: newStatus } : c))
     );
+
+    api
+      .setConversationStatus({ conversationId: selectedId, status: newStatus })
+      .catch((error) => {
+        console.error("Failed to update archive status:", error);
+      });
 
     // If archiving, clear selection or switch view to see it?
     // Better to just clear selection to indicate it moved.
@@ -280,18 +316,94 @@ const InboxView: React.FC<InboxProps> = ({
       setConversations((prev) =>
         prev.map((c) => (c.id === selectedId ? { ...c, isBlocked: true } : c))
       );
+      if (selectedId) {
+        api
+          .setConversationBlocked({
+            conversationId: selectedId,
+            isBlocked: true,
+          })
+          .catch((error) => {
+            console.error("Failed to block conversation:", error);
+          });
+      }
       setShowMenu(false);
     }
   };
 
   const handleReportSubmit = (reason: string) => {
+    // Report is currently a UI flow; we also block as a safety measure.
     alert(`Report submitted for "${reason}". User has been blocked.`);
     setConversations((prev) =>
       prev.map((c) => (c.id === selectedId ? { ...c, isBlocked: true } : c))
     );
+    if (selectedId) {
+      api
+        .setConversationBlocked({ conversationId: selectedId, isBlocked: true })
+        .catch((error) => {
+          console.error("Failed to block conversation:", error);
+        });
+    }
     setShowReportModal(false);
     setShowMenu(false);
   };
+
+  const handleRespondToRequest = useCallback(
+    async (action: "accept" | "decline") => {
+      if (!selectedId) {
+        return;
+      }
+      try {
+        const result = await api.respondToRequest({
+          conversationId: selectedId,
+          action,
+        });
+
+        setConversations((prev) =>
+          prev.map((c) => {
+            if (c.id !== selectedId) {
+              return c;
+            }
+            const nextMessages = result.message
+              ? [...c.messages, result.message]
+              : c.messages;
+            return {
+              ...c,
+              isRequest: result.isRequest ?? false,
+              requestStatus:
+                result.requestStatus === "accepted"
+                  ? "accepted"
+                  : result.requestStatus === "declined"
+                    ? "declined"
+                    : c.requestStatus,
+              status: result.status ?? c.status,
+              lastMessage: result.lastMessage ?? c.lastMessage,
+              lastMessageDate: result.lastMessageDate ?? c.lastMessageDate,
+              lastMessageAt: result.lastMessageAt ?? c.lastMessageAt,
+              messages: nextMessages,
+            };
+          })
+        );
+        // If declined, it may move to archived view; clear selection in active view.
+        if (action === "decline" && !viewArchived) {
+          setSelectedId(null);
+        }
+      } catch (error) {
+        console.error("Failed to respond to request:", error);
+      }
+    },
+    [selectedId, setConversations, viewArchived]
+  );
+
+  const selectedIsIncomingRequest = useMemo(() => {
+    if (!selectedConversation?.isRequest) {
+      return false;
+    }
+    const first = selectedConversation.messages[0];
+    if (!first) {
+      return false;
+    }
+    return first.senderId !== currentUserId;
+  }, [currentUserId, selectedConversation]);
 
   // Filter logic
   const displayedConversations = conversations.filter((c) => {
@@ -422,7 +534,7 @@ const InboxView: React.FC<InboxProps> = ({
                 <div
                   className={`relative flex cursor-pointer gap-3 border-gray-50 border-b p-4 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700 ${selectedId === conv.id ? "border-orange-100 bg-orange-50/50 dark:border-orange-900 dark:bg-orange-500/10" : ""}`}
                   key={conv.id}
-                  onClick={() => setSelectedId(conv.id)}
+                  onClick={() => selectConversation(conv.id)}
                 >
                   <div className="relative shrink-0">
                     <img
@@ -444,7 +556,7 @@ const InboxView: React.FC<InboxProps> = ({
                         {conv.otherUser.name}
                       </h3>
                       <span className="ml-2 whitespace-nowrap text-[10px] text-gray-400 dark:text-gray-500">
-                        {conv.lastMessageDate}
+                        {displayLastMessageDate(conv)}
                       </span>
                     </div>
 
@@ -549,6 +661,11 @@ const InboxView: React.FC<InboxProps> = ({
               </div>
               <div className="relative flex gap-2">
                 <button
+                  aria-label={
+                    selectedConversation.status === "archived"
+                      ? "Unarchive conversation"
+                      : "Archive conversation"
+                  }
                   className={`rounded-full p-2 hover:bg-gray-100 dark:hover:bg-gray-700 ${selectedConversation.status === "archived" ? "text-orange-500" : "text-gray-500 dark:text-gray-400"}`}
                   onClick={(e) => toggleArchive(e)}
                   title={
@@ -556,12 +673,14 @@ const InboxView: React.FC<InboxProps> = ({
                       ? "Unarchive"
                       : "Archive"
                   }
+                  type="button"
                 >
                   <Archive size={18} />
                 </button>
 
                 <div className="relative" ref={menuDropdownRef}>
                   <button
+                    aria-label="Conversation menu"
                     className="rounded-full p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
                     onClick={() => setShowMenu(!showMenu)}
                     type="button"
@@ -677,7 +796,7 @@ const InboxView: React.FC<InboxProps> = ({
               {/* Request Action Buttons for INCOMING requests */}
               {!selectedConversation.isBlocked &&
                 selectedConversation.isRequest &&
-                selectedConversation.messages[0].senderId !== "me" && (
+                selectedIsIncomingRequest && (
                   <div className="mx-auto mb-6 max-w-md rounded-xl border border-gray-200 bg-white p-5 text-center shadow-sm dark:border-gray-700 dark:bg-gray-800">
                     <h4 className="mb-1 font-bold text-gray-900 dark:text-gray-100">
                       Request Pending
@@ -687,10 +806,18 @@ const InboxView: React.FC<InboxProps> = ({
                       {selectedConversation.requestType} request.
                     </p>
                     <div className="flex justify-center gap-3">
-                      <button className="flex items-center gap-2 rounded-lg bg-green-500 px-5 py-2 font-bold text-sm text-white shadow-sm transition-transform hover:bg-green-600 active:scale-95">
+                      <button
+                        className="flex items-center gap-2 rounded-lg bg-green-500 px-5 py-2 font-bold text-sm text-white shadow-sm transition-transform hover:bg-green-600 active:scale-95"
+                        onClick={() => handleRespondToRequest("accept")}
+                        type="button"
+                      >
                         <Check size={16} /> Accept
                       </button>
-                      <button className="flex items-center gap-2 rounded-lg bg-gray-100 px-5 py-2 font-bold text-gray-700 text-sm transition-transform hover:bg-gray-200 active:scale-95 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                      <button
+                        className="flex items-center gap-2 rounded-lg bg-gray-100 px-5 py-2 font-bold text-gray-700 text-sm transition-transform hover:bg-gray-200 active:scale-95 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                        onClick={() => handleRespondToRequest("decline")}
+                        type="button"
+                      >
                         <X size={16} /> Decline
                       </button>
                     </div>
@@ -828,6 +955,7 @@ const InboxView: React.FC<InboxProps> = ({
               </div>
               <textarea
                 className="w-full resize-none border-0 bg-transparent text-gray-700 text-sm placeholder-gray-400 outline-none dark:text-gray-300 dark:placeholder-gray-500"
+                onBlur={persistPrivateNote}
                 onChange={handleNoteChange}
                 placeholder="Add a private note about this person..."
                 rows={3}

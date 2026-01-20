@@ -63,6 +63,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
   const [refIsPositive, setRefIsPositive] = useState(true);
   const [refText, setRefText] = useState("");
   const [isSubmittingRef, setIsSubmittingRef] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   // Interaction history state (for enabling Write Reference button)
   const [hasInteraction, setHasInteraction] = useState(false);
@@ -277,21 +278,38 @@ const ProfileView: React.FC<ProfileViewProps> = ({
       return;
     }
 
-    // Create a local URL for the file
-    const localUrl = URL.createObjectURL(file);
+    const upload = async (): Promise<void> => {
+      if (!profile) {
+        return;
+      }
+      setIsUploadingImage(true);
+      try {
+        const { publicUrl } = await api.uploadImageToR2({ kind: type, file });
+        if (type === "avatar") {
+          handleInputChange("avatarUrl", publicUrl);
+          await api.updateUser(profile.id, { avatarUrl: publicUrl });
+        } else if (type === "cover") {
+          handleInputChange("coverUrl", publicUrl);
+          await api.updateUser(profile.id, { coverUrl: publicUrl });
+        } else {
+          const nextPhotos = [...profile.photos, publicUrl];
+          setProfile((prev) => (prev ? { ...prev, photos: nextPhotos } : prev));
+          await api.updateUser(profile.id, { photos: nextPhotos });
+        }
+        toast.success("Uploaded!");
+      } catch (error) {
+        console.error("Upload failed:", error);
+        toast.error("Upload failed. Please try again.");
+      } finally {
+        setIsUploadingImage(false);
+        // Reset the input so the same file can be selected again
+        event.target.value = "";
+      }
+    };
 
-    if (type === "avatar") {
-      handleInputChange("avatarUrl", localUrl);
-    } else if (type === "cover") {
-      handleInputChange("coverUrl", localUrl);
-    } else {
-      setProfile((prev) =>
-        prev ? { ...prev, photos: [...prev.photos, localUrl] } : prev
-      );
-    }
-
-    // Reset the input so the same file can be selected again
-    event.target.value = "";
+    upload().catch((error) => {
+      console.error("Upload failed:", error);
+    });
   };
 
   const handleUpdateImage = (type: "avatar" | "cover") => {
@@ -308,14 +326,12 @@ const ProfileView: React.FC<ProfileViewProps> = ({
 
   const removePhoto = (index: number) => {
     if (window.confirm("Delete this photo?") && profile) {
-      setProfile((prev) =>
-        prev
-          ? {
-              ...prev,
-              photos: prev.photos.filter((_, i) => i !== index),
-            }
-          : prev
-      );
+      const nextPhotos = profile.photos.filter((_, i) => i !== index);
+      setProfile((prev) => (prev ? { ...prev, photos: nextPhotos } : prev));
+      api.updateUser(profile.id, { photos: nextPhotos }).catch((error) => {
+        console.error("Failed to save photos:", error);
+        toast.error("Failed to save photos. Please try again.");
+      });
     }
   };
 
@@ -419,7 +435,9 @@ const ProfileView: React.FC<ProfileViewProps> = ({
         {isMe && (
           <button
             className="absolute top-4 right-4 flex cursor-pointer items-center gap-2 rounded-full bg-black/50 px-3 py-1.5 text-sm text-white transition-colors hover:bg-black/70"
+            disabled={isUploadingImage}
             onClick={() => handleUpdateImage("cover")}
+            title={isUploadingImage ? "Uploading..." : "Change cover"}
           >
             <Camera size={16} /> Change Cover
           </button>
@@ -490,7 +508,9 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                 {isMe && (
                   <button
                     className="absolute right-2 bottom-2 cursor-pointer rounded-full bg-blue-600 p-2 text-white shadow-md transition-colors hover:bg-blue-700"
+                    disabled={isUploadingImage}
                     onClick={() => handleUpdateImage("avatar")}
+                    title={isUploadingImage ? "Uploading..." : "Change avatar"}
                   >
                     <Camera size={18} />
                   </button>
@@ -905,7 +925,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                 <section>
                   <div className="mb-3 flex items-center justify-between">
                     <h3 className="font-bold text-gray-900 text-lg dark:text-gray-100">
-                      Why I'm on Couchsurfing
+                      Why I&apos;m here
                     </h3>
                     {isEditing && (
                       <button
@@ -1122,7 +1142,9 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                   {isMe && (
                     <button
                       className="rounded-lg bg-orange-500 px-4 py-2 font-bold text-white shadow-sm transition-colors hover:bg-orange-600"
+                      disabled={isUploadingImage}
                       onClick={handleAddPhoto}
+                      title={isUploadingImage ? "Uploading..." : "Upload photo"}
                     >
                       + Upload Photo
                     </button>

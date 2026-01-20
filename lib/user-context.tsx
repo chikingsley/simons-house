@@ -1,3 +1,4 @@
+import { useQuery } from "convex/react";
 import type React from "react";
 import {
   createContext,
@@ -6,15 +7,14 @@ import {
   useEffect,
   useState,
 } from "react";
-import type { ProfileExtended, User } from "../types";
+import type { ProfileExtended } from "../types";
 import { api } from "./api";
+import { convexApi } from "./convex-api";
 
 type UserContextType = {
   currentUser: ProfileExtended | null;
   currentUserId: string;
-  allUsers: User[];
   isLoading: boolean;
-  switchUser: (userId: string) => void;
   refreshCurrentUser: () => Promise<void>;
   updateCurrentUser: (data: Partial<ProfileExtended>) => Promise<void>;
 };
@@ -22,51 +22,30 @@ type UserContextType = {
 const UserContext = createContext<UserContextType | null>(null);
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
-  const [currentUserId, setCurrentUserId] = useState("me");
+  const viewer = useQuery(convexApi.users.getCurrentUser, {}) as
+    | ProfileExtended
+    | null
+    | undefined;
   const [currentUser, setCurrentUser] = useState<ProfileExtended | null>(null);
-  const [allUsers, setAllUsers] = useState<User[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
-  const refreshCurrentUser = useCallback(async () => {
-    try {
-      const user = await api.getUser(currentUserId);
-      setCurrentUser(user);
-    } catch (error) {
-      console.error("Failed to fetch current user:", error);
-    }
-  }, [currentUserId]);
+  const currentUserId = currentUser?.id ?? "";
+  const isLoading = viewer === undefined;
 
-  const loadUsers = useCallback(async () => {
-    try {
-      const result = await api.getUsers({ limit: 100 }); // Get all users for switcher
-      // Add "me" to the list
-      const me = await api.getCurrentUser();
-      if (me) {
-        setAllUsers([me, ...result.users]);
-      } else {
-        setAllUsers(result.users);
-      }
-    } catch (error) {
-      console.error("Failed to fetch users:", error);
-    }
-  }, []);
-
+  // Keep local currentUser in sync for optimistic UI updates (e.g. settings edits).
   useEffect(() => {
-    const init = async () => {
-      setIsLoading(true);
-      await Promise.all([refreshCurrentUser(), loadUsers()]);
-      setIsLoading(false);
-    };
-    init();
-  }, [refreshCurrentUser, loadUsers]);
+    if (viewer) {
+      setCurrentUser(viewer);
+    }
+  }, [viewer]);
 
-  const switchUser = useCallback((userId: string) => {
-    setCurrentUserId(userId);
+  const refreshCurrentUser = useCallback((): Promise<void> => {
+    // No-op: Convex subscriptions keep this current.
+    return Promise.resolve();
   }, []);
 
   const updateCurrentUser = useCallback(
     async (data: Partial<ProfileExtended>) => {
-      if (!currentUser) {
+      if (!(currentUser && currentUserId)) {
         return;
       }
       try {
@@ -86,9 +65,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       value={{
         currentUser,
         currentUserId,
-        allUsers,
         isLoading,
-        switchUser,
         refreshCurrentUser,
         updateCurrentUser,
       }}

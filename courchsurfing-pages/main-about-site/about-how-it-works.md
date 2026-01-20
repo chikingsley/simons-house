@@ -1,6 +1,6 @@
 Title: How It Works | Couchsurfing
 
-URL Source: https://www.couchsurfing.com/about/how-it-works/
+URL Source: [couchsurfing.com/about](https://www.couchsurfing.com/about/how-it-works/)
 
 Published Time: Mon, 22 Jul 2024 19:16:22 GMT
 

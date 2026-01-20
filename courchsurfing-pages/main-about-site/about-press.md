@@ -1,6 +1,6 @@
 Title: Press | Couchsurfing
 
-URL Source: https://www.couchsurfing.com/about/press/
+URL Source: [couchsurfing.com/about](https://www.couchsurfing.com/about/press/)
 
 Markdown Content:
 Couchsurfing is a global network of over 11 million travelers, adventure seekers and lifelong learners in over 150,000 cities in every country in the world.

@@ -1,3 +1,4 @@
+import { SignOutButton } from "@clerk/clerk-react";
 import {
   AlertTriangle,
   Bell,
@@ -17,7 +18,6 @@ import {
 } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
-import { api } from "../lib/api";
 import { useUser } from "../lib/user-context";
 import type { ProfileExtended } from "../types";
 
@@ -44,7 +44,7 @@ type SettingsData = {
 };
 
 const SettingsView: React.FC = () => {
-  const { currentUserId } = useUser();
+  const { currentUser } = useUser();
   const [activeTab, setActiveTab] = useState<SettingsTab>("account");
   const [profile, setProfile] = useState<ProfileExtended | null>(null);
   const [settings, setSettings] = useState<SettingsData>({
@@ -61,37 +61,28 @@ const SettingsView: React.FC = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load user profile and settings
+  // Load user profile and settings (profile is derived from currentUser)
   useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true);
-      try {
-        const userProfile = await api.getUser(currentUserId);
-        if (userProfile) {
-          setProfile(userProfile);
-          // In a real app, settings would come from a separate API
-          // For now, use placeholder defaults based on the user
-          setSettings({
-            email: `${userProfile.name.toLowerCase().replace(/\s+/g, ".")}@example.com`,
-            phone: "(555) 000-0000",
-            address: userProfile.location,
-            publicLocation: userProfile.location,
-            emergencyContact: {
-              name: "",
-              phone: "",
-              email: "",
-              notes: "",
-            },
-          });
-        }
-      } catch (error) {
-        console.error("Failed to load settings:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadData();
-  }, [currentUserId]);
+    setIsLoading(true);
+    if (!currentUser) {
+      setIsLoading(false);
+      return;
+    }
+    setProfile(currentUser);
+    setSettings({
+      email: `${currentUser.name.toLowerCase().replace(/\s+/g, ".")}@example.com`,
+      phone: "(555) 000-0000",
+      address: currentUser.location,
+      publicLocation: currentUser.location,
+      emergencyContact: {
+        name: "",
+        phone: "",
+        email: "",
+        notes: "",
+      },
+    });
+    setIsLoading(false);
+  }, [currentUser]);
 
   // Helper for consistent input styles (Light theme enforcement)
   const inputClass =
@@ -133,7 +124,7 @@ const SettingsView: React.FC = () => {
                     </span>
                     <input
                       className={`${inputClass} rounded-l-none`}
-                      defaultValue={currentUserId}
+                      defaultValue={profile.id}
                       type="text"
                     />
                   </div>
@@ -375,7 +366,7 @@ const SettingsView: React.FC = () => {
                     Membership Type
                   </div>
                   <div className="text-gray-900 dark:text-gray-100">
-                    Couchsurfing Contribution
+                    Simon&apos;s House Membership
                   </div>
 
                   <div className="font-bold text-gray-700 dark:text-gray-300">
@@ -396,7 +387,7 @@ const SettingsView: React.FC = () => {
                     Chosen Plan
                   </div>
                   <div className="text-gray-900 dark:text-gray-100">
-                    Couchsurfing Contribution charged monthly
+                    Simon&apos;s House Membership charged monthly
                   </div>
 
                   <div className="font-bold text-gray-700 dark:text-gray-300">
@@ -437,7 +428,7 @@ const SettingsView: React.FC = () => {
               <h3 className={sectionTitleClass}>Notification Preferences</h3>
               <p className="mb-6 text-gray-500 text-sm dark:text-gray-400">
                 Choose how you want to be notified about activity on
-                Couchsurfing.
+                Simon&apos;s House.
               </p>
 
               <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
@@ -761,9 +752,14 @@ const SettingsView: React.FC = () => {
           ))}
 
           <div className="my-4 border-gray-200 border-t pt-4 dark:border-gray-700">
-            <button className="flex w-full items-center gap-3 rounded-full px-4 py-3 font-bold text-gray-600 text-sm hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
-              <LogOut size={18} /> Log Out
-            </button>
+            <SignOutButton>
+              <button
+                className="flex w-full items-center gap-3 rounded-full px-4 py-3 font-bold text-gray-600 text-sm hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                type="button"
+              >
+                <LogOut size={18} /> Log Out
+              </button>
+            </SignOutButton>
             <button className="flex w-full items-center gap-3 rounded-full px-4 py-3 font-bold text-red-600 text-sm hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20">
               <Trash2 size={18} /> Delete Account
             </button>

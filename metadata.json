@@ -1,5 +1,5 @@
 {
-  "name": "Couchsurfing Reimagined",
-  "description": "A modern, responsive clone of the Couchsurfing platform featuring improved UX for profiles, messaging, and host search.",
+  "name": "Simon's House",
+  "description": "A modern social travel app built with Clerk + Convex: profiles, messaging, and host search.",
   "requestFramePermissions": []
 }

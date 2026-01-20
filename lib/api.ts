@@ -6,8 +6,8 @@ import type {
   Reference,
   User,
 } from "../types";
-
-const API_BASE = "http://localhost:5174/api";
+import { convex } from "./convex";
+import { convexApi } from "./convex-api";
 
 export type PaginatedUsers = {
   users: User[];
@@ -16,123 +16,144 @@ export type PaginatedUsers = {
 };
 
 export const api = {
-  // Get users with pagination (for dashboard)
   async getUsers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<PaginatedUsers> {
-    const params = new URLSearchParams();
-    if (options?.limit) {
-      params.set("limit", String(options.limit));
-    }
-    if (options?.offset) {
-      params.set("offset", String(options.offset));
-    }
-    const res = await fetch(`${API_BASE}/users?${params}`);
-    return res.json();
+    return await convex.query(convexApi.users.getUsers, {
+      limit: options?.limit,
+      offset: options?.offset,
+    });
   },
 
-  // Get current user profile
   async getCurrentUser(): Promise<ProfileExtended | null> {
-    const res = await fetch(`${API_BASE}/me`);
-    return res.json();
+    return await convex.query(convexApi.users.getCurrentUser, {});
   },
 
-  // Get user by ID
   async getUser(id: string): Promise<ProfileExtended | null> {
-    const res = await fetch(`${API_BASE}/users/${id}`);
-    return res.json();
+    return await convex.query(convexApi.users.getUser, { id });
   },
 
-  // Update user profile
   async updateUser(
     id: string,
     data: Partial<ProfileExtended>
   ): Promise<ProfileExtended | null> {
-    const res = await fetch(`${API_BASE}/users/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    return res.json();
+    await convex.mutation(convexApi.users.updateUser, { id, data });
+    return await convex.query(convexApi.users.getUser, { id });
   },
 
-  // Get conversations
-  async getConversations(userId = "me"): Promise<Conversation[]> {
-    const res = await fetch(`${API_BASE}/conversations?userId=${userId}`);
-    return res.json();
+  async getConversations(_userId?: string): Promise<Conversation[]> {
+    return await convex.query(convexApi.conversations.getConversations, {});
   },
 
-  // Create new conversation
   async createConversation(
-    userId: string,
+    _userId: string,
     otherUserId: string,
     requestType: "host" | "meetup",
     message: string
   ): Promise<Conversation> {
-    const res = await fetch(`${API_BASE}/conversations`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, otherUserId, requestType, message }),
+    return await convex.mutation(convexApi.conversations.createConversation, {
+      otherUserId,
+      requestType,
+      message,
     });
-    return res.json();
   },
 
-  // Send message
   async sendMessage(
     conversationId: string,
-    senderId: string,
+    _senderId: string,
     text: string
   ): Promise<Message> {
-    const res = await fetch(
-      `${API_BASE}/conversations/${conversationId}/messages`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ senderId, text }),
-      }
-    );
-    return res.json();
+    return await convex.mutation(convexApi.conversations.sendMessage, {
+      conversationId,
+      text,
+    });
   },
 
-  // Get labels
-  async getLabels(userId = "me"): Promise<Label[]> {
-    const res = await fetch(`${API_BASE}/labels?userId=${userId}`);
-    return res.json();
+  async setConversationStatus(options: {
+    conversationId: string;
+    status: "active" | "archived";
+  }): Promise<void> {
+    await convex.mutation(convexApi.conversations.setConversationStatus, {
+      conversationId: options.conversationId,
+      status: options.status,
+    });
   },
 
-  // Create label
+  async setConversationBlocked(options: {
+    conversationId: string;
+    isBlocked: boolean;
+  }): Promise<void> {
+    await convex.mutation(convexApi.conversations.setConversationBlocked, {
+      conversationId: options.conversationId,
+      isBlocked: options.isBlocked,
+    });
+  },
+
+  async setConversationNotes(options: {
+    conversationId: string;
+    notes?: string;
+  }): Promise<void> {
+    await convex.mutation(convexApi.conversations.setConversationNotes, {
+      conversationId: options.conversationId,
+      notes: options.notes,
+    });
+  },
+
+  async markConversationRead(options: {
+    conversationId: string;
+  }): Promise<{ updated: number }> {
+    return await convex.mutation(convexApi.conversations.markConversationRead, {
+      conversationId: options.conversationId,
+    });
+  },
+
+  async respondToRequest(options: {
+    conversationId: string;
+    action: "accept" | "decline";
+  }): Promise<{
+    ok: boolean;
+    alreadyHandled?: boolean;
+    requestStatus?: "accepted" | "declined";
+    status?: "active" | "archived";
+    isRequest?: boolean;
+    message?: Message;
+    lastMessage?: string;
+    lastMessageDate?: string;
+    lastMessageAt?: string;
+  }> {
+    return await convex.mutation(convexApi.conversations.respondToRequest, {
+      conversationId: options.conversationId,
+      action: options.action,
+    });
+  },
+
+  async getLabels(_userId?: string): Promise<Label[]> {
+    return await convex.query(convexApi.labels.getLabels, {});
+  },
+
   async createLabel(
-    userId: string,
+    _userId: string,
     name: string,
     color: string
   ): Promise<Label> {
-    const res = await fetch(`${API_BASE}/labels`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, name, color }),
-    });
-    return res.json();
+    return await convex.mutation(convexApi.labels.createLabel, { name, color });
   },
 
-  // Delete label
   async deleteLabel(id: string): Promise<void> {
-    await fetch(`${API_BASE}/labels/${id}`, { method: "DELETE" });
+    await convex.mutation(convexApi.labels.deleteLabel, { id });
   },
 
-  // Update conversation labels
   async updateConversationLabels(
     conversationId: string,
     labels: string[]
   ): Promise<void> {
-    await fetch(`${API_BASE}/conversations/${conversationId}/labels`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ labels }),
+    await convex.mutation(convexApi.conversations.updateConversationLabels, {
+      conversationId,
+      labels,
     });
   },
 
-  // Create reference
   async createReference(options: {
     userId: string;
     authorId: string;
@@ -140,23 +161,48 @@ export const api = {
     text: string;
     isPositive: boolean;
   }): Promise<Reference> {
-    const res = await fetch(`${API_BASE}/references`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(options),
+    return await convex.mutation(convexApi.references.createReference, {
+      userId: options.userId,
+      type: options.type,
+      text: options.text,
+      isPositive: options.isPositive,
     });
-    return res.json();
   },
 
-  // Check interaction history between two users
   async hasInteractionHistory(
-    userId: string,
+    _userId: string,
     otherUserId: string
   ): Promise<boolean> {
-    const res = await fetch(
-      `${API_BASE}/interactions?userId=${userId}&otherUserId=${otherUserId}`
+    return await convex.query(convexApi.interactions.hasInteractionHistory, {
+      otherUserId,
+    });
+  },
+
+  async uploadImageToR2(options: {
+    kind: "avatar" | "cover" | "photo";
+    file: File;
+  }): Promise<{ publicUrl: string }> {
+    const { uploadUrl, publicUrl } = await convex.action(
+      convexApi.files.generateUploadUrl,
+      {
+        kind: options.kind,
+        fileName: options.file.name,
+        contentType: options.file.type || "application/octet-stream",
+      }
     );
-    const data = await res.json();
-    return data.hasHistory;
+
+    const res = await fetch(uploadUrl, {
+      method: "PUT",
+      headers: {
+        "Content-Type": options.file.type || "application/octet-stream",
+      },
+      body: options.file,
+    });
+
+    if (!res.ok) {
+      throw new Error(`Upload failed (${res.status})`);
+    }
+
+    return { publicUrl };
   },
 };
